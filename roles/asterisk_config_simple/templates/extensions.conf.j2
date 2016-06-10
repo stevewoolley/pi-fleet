@@ -78,6 +78,7 @@ exten = o,1,Goto({{ operator_extension }})
 
 [Outbound-Dial]
 exten = _X.,1,Verbose(1, "Didn't match any restricted numbers, proceeding with outbound dial.")
+ same = n,Set(CALLERID(all)="{{ twilio_number }}" <{{ twilio_number }}>)
  same = n,Dial(PJSIP/+1${EXTEN}@twilio0)
  same = n,Hangup()
 

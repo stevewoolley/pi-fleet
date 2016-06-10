@@ -1,0 +1,42 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          ibeacon
+# Required-Start:    $local_fs $network
+# Required-Stop:     $local_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: ibeacon
+# Description:       ibeacon
+### END INIT INFO
+
+export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:$PATH
+
+DESC="iBeacon Application Software"
+PIDFILE=/var/run/ibeacon.pid
+SCRIPTNAME=/etc/init.d/ibeacon
+
+export BLUETOOTH_DEVICE=hci0
+export UUID="{{ uuid }}"
+export MAJOR="00 16"
+export POWER="C8"
+
+case "$1" in
+  start)
+    echo "Starting ibeacon..."
+    hciconfig $BLUETOOTH_DEVICE up
+    hciconfig $BLUETOOTH_DEVICE noleadv
+    hciconfig $BLUETOOTH_DEVICE leadv 0
+    hcitool -i hci0 cmd 0x08 0x0008 1E 02 01 1A 1A FF 4C 00 02 15 $UUID $MAJOR {{ minor }} $POWER 00
+    ;;
+  stop)
+    echo "Stopping ibeacon..."
+    hciconfig $BLUETOOTH_DEVICE noleadv
+    ;;
+  restart)
+    $0 stop
+    $0 start
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart}"
+    exit 1
+esac

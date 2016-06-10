@@ -1,0 +1,35 @@
+---
+- name: 'Configure WIFI'
+  template: src=wpa_supplicant.conf.j2 dest=/etc/wpa_supplicant/wpa_supplicant.conf mode=0600
+
+- name: 'Disable Wifi Power Management'
+  template: src=interfaces.j2 dest=/etc/network/interfaces mode=0644
+
+- name: 'Set Pi Hostname'
+  include: hosts.yml
+
+- name: 'Ensure filesystem is resized'
+  expand_fs:
+  when: raspi_config_expanded_filesystem
+
+- name: 'set locale'
+  template: src=locale.j2 dest=/etc/default/locale
+  when: ansible_os_family == "Debian"
+
+- name: 'set locale gen'
+  template: src=locale.gen.j2 dest=/etc/locale.gen
+  when: ansible_os_family == "Debian"
+
+- name: 'create locale'
+  command: "locale-gen"
+  when: ansible_os_family == "Debian"
+
+- name: 'Set additional config vars'
+  pi_boot_config:
+  args:
+    config_vals: "{{raspi_config_other_options}}"
+  notify:
+    - apply raspi-config
+
+- name: 'change pi user password'
+  user: name=pi update_password=always password={{ pi_user_password }}

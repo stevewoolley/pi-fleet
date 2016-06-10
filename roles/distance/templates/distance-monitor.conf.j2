@@ -1,0 +1,9 @@
+[program:distance-monitor]
+command={{ webapps_dir }}/distance-monitor.py -e {{ aws_iot_endpoint }} -o sensors/{{ inventory_hostname }} -t $aws/things/{{ inventory_hostname }}/shadow/update -z {{ distance_trigger_pin }} -i {{ distance_echo_pin }}
+directory={{ webapps_dir }}
+autostart=true
+autorestart=true
+stdout_logfile=/var/log/iot.log
+stderr_logfile=/var/log/iot.log
+redirect_stderr=true
+exitcodes=0

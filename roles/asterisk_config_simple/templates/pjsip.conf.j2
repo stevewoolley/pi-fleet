@@ -1,0 +1,95 @@
+; {{ ansible_managed }}
+;
+
+;
+; -- Transport --
+;
+
+[transport-udp-nat]
+type = transport
+protocol = udp
+bind = 0.0.0.0
+;local_net={{ private_net }}
+;external_media_address={{ external_media_address }}
+;external_signaling_address={{ external_signaling_address }}
+
+;
+; -- Trunk templates --
+;
+
+[twilio-trunks](!)
+type = endpoint
+transport = transport-udp-nat
+context = ITSP-Incoming
+disallow = all
+allow = ulaw
+
+[auth-out](!)
+type = auth
+auth_type = userpass
+
+;
+; -- Trunks --
+;
+
+[twilio0](twilio-trunks)
+aors = twilio0-aors
+outbound_auth = twilio0-auth
+from_domain = {{ twilio_domain }}
+from_user = {{ twilio_number }}
+
+[twilio0-aors]
+type = aor
+contact = sip:{{ twilio_domain }}:5060
+
+[twilio0-ident]
+type = identify
+endpoint = twilio0
+match = 54.172.60.0
+match = 54.172.60.1
+match = 54.172.60.2
+match = 54.172.60.3
+
+[twilio0-auth](auth-out)
+password = {{ twilio_trunk_password }}
+username = {{ twilio_trunk_username }}
+
+;
+; -- Endpoint templates --
+;
+
+[endpoint­basic](!)
+type = endpoint
+transport = transport-udp-nat
+context = Long-Distance
+allow = !all,ulaw
+direct_media = no
+trust_id_outbound = yes
+device_state_busy_at = 1
+
+[auth­userpass](!)
+type = auth
+auth_type = userpass
+
+[aor­single­reg](!)
+type = aor
+max_contacts = 1
+
+;
+; -- Endpoints --
+;
+
+{% for ext in extensions %}
+[{{ ext.number }}](endpoint­basic)
+outbound_auth = {{ ext.number }}
+aors = {{ ext.number }}
+
+[{{ ext.number }}](auth­userpass)
+password = {{ ext.password }}
+username = {{ ext.number }}
+
+[{{ ext.number }}](aor­single­reg)
+
+{% endfor %}
+
+

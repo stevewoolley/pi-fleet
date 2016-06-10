@@ -1,0 +1,4 @@
+---
+- hosts: bluetooth
+  roles:
+    - bluetooth

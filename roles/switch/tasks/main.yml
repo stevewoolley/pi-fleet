@@ -1,0 +1,15 @@
+---
+- name: 'Clone latest IoT'
+  git: repo=https://github.com/stevewoolley/IoT.git
+      dest=/home/pi/IoT
+      accept_hostkey=yes
+  become: yes
+  become_user: pi
+  notify:
+    - restart supervisord
+
+- name: 'create switch supervisord confs'
+  template: src=sensor-monitor.conf.j2 dest=/etc/supervisor/conf.d/sensor-monitor-{{ item.value.pin }}.conf mode=0644
+  with_dict: "{{ switches }}"
+  notify:
+    - restart supervisord

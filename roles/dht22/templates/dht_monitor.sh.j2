@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd /home/pi/IoT
+if [ -f "/home/pi/IoT/dht-monitor.py" ]; then
+  ./dht-monitor.py -e {{ aws_iot_endpoint }} -t sensors/{{ inventory_hostname }} -o "\$aws/things/{{ inventory_hostname }}/shadow/update" -y {{ dht_type }} -i {{ dht_pin }}
+fi

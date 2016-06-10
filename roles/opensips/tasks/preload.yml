@@ -1,0 +1,8 @@
+---
+- name: 'User Accounts'
+  command: "opensipsctl add {{item}}@{{ opensips_domain }} {{ opensips_sip_client_default_password }}"
+  with_items:
+    - 1000
+    - 1001
+    - 1002
+    - 1003

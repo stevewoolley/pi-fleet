@@ -1,0 +1,29 @@
+---
+- name: 'Set timezone'
+  include: timezone.yml
+
+- name: 'Set hostname'
+  include: hostname.yml
+
+- name: 'Update ubuntu package cache'
+  action: apt update_cache=yes
+
+- name: 'Upgrade to the lastest packages'
+  action: apt upgrade=safe
+
+- name: 'Install prerequisites'
+  action: apt pkg={{item}} state=installed
+  with_items:
+    - git
+    - awscli
+    - screen
+    - sqlite3
+
+- name: 'nginx setup'
+  include: nginx.yml
+
+- name: 'python setup'
+  include: python.yml
+
+- name: 'flask setup'
+  include: flask.yml

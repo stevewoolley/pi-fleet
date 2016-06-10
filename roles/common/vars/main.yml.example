@@ -1,0 +1,7 @@
+---
+wifi_ssid: "YOUR_WIFI_SSID"
+wifi_psk: "YOUR_WIFI_PASSWORD"
+wifi_key_mgmt: WPA-PSK
+aws_access_key_id: YOUR_AWS_ACCESS_KEY
+aws_secret_access_key: YOUR_AWS_SECRET_KEY
+aws_region: YOUR_AWS_REGION

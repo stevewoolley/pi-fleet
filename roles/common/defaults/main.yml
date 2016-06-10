@@ -1,0 +1,11 @@
+raspi_config_update_packages: yes
+raspi_config_expanded_filesystem: yes
+raspi_config_enable_camera: no
+raspi_config_locale: en_US.UTF8
+raspi_config_timezone: UTC
+raspi_config_other_options: {
+  'dtparam=act_led_trigger':'none',
+  'dtparam=act_led_activelow':'off',
+  'dtparam=pwr_led_trigger':'none',
+  'dtparam=pwr_led_activelow':'off'
+}

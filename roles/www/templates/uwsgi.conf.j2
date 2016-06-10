@@ -1,0 +1,8 @@
+[program:uwsgi]
+command=/usr/bin/uwsgi --ini /home/ubuntu/roost/src/roost.ini
+autostart=true
+autorestart=true
+stdout_logfile=/var/log/roost.log
+stderr_logfile=/var/log/roost.log
+redirect_stderr=true
+exitcodes=0

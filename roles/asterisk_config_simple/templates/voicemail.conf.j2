@@ -1,0 +1,8 @@
+[general]
+format = wav49|gsm|wav
+
+[default]
+
+{% for ext in extensions %}
+{{ ext.number }} = {{ ext.vmail_password }}, {{ ext.first_name }} {{ ext.last_name }}, {{ ext.email }}
+{% endfor %}

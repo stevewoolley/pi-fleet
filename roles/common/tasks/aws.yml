@@ -1,0 +1,12 @@
+---
+- name: 'Ensures pi user aws dir exists'
+  file: path=/home/pi/.aws state=directory mode=0700 owner=pi group=pi
+
+- name: 'Ensures root user aws dir exists'
+  file: path=/root/.aws state=directory mode=0700 owner=root group=root
+
+- name: 'Amazon config for pi'
+  template: src=aws_config.j2 dest=/home/pi/.aws/config mode=0600 owner=pi group=pi
+
+- name: 'Amazon config for root'
+  template: src=aws_config.j2 dest=/root/.aws/config mode=0600 owner=root group=root

@@ -1,0 +1,19 @@
+---
+- name: 'Clone latest IoT'
+  git: repo=https://github.com/stevewoolley/IoT.git
+      dest=/home/pi/IoT
+      accept_hostkey=yes
+  become: yes
+  become_user: pi
+
+- name: 'Install required packages'
+  action: apt pkg={{item}} state=installed
+  with_items:
+    - python-numpy
+    - python-rpi.gpio
+
+- name: 'Create photocell_monitor script'
+  template: src=photocell_monitor.sh.j2 dest=/home/pi/photocell_monitor.sh mode=0755 owner=pi group=pi
+
+- name: 'Crontab entry for photocell monitor'
+  cron: name="photocell monitor" minute="*/5" job="/home/pi/photocell_monitor.sh"

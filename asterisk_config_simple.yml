@@ -1,0 +1,4 @@
+---
+- hosts: site
+  roles:
+    - asterisk_config_simple

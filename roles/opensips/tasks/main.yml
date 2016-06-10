@@ -1,0 +1,112 @@
+---
+  - name: 'Install dependency packages'
+    action: apt pkg={{item}} state=installed
+    with_items:
+      - python-dev
+      - python-openssl
+      - bison
+      - flex
+      - libncurses5-dev
+      - mysql-client
+      - libmysqlclient-dev
+      - libexpat1-dev
+      - libradiusclient-ng2
+      - libradiusclient-ng-dev
+      - libcurl3-dev
+      - libxmlrpc-core-c3
+      - libxmlrpc-core-c3-dev
+      - libsnmp-dev
+      - libconfuse0
+      - libconfuse-dev
+      - openssl
+      - libssl-dev
+      - perl
+      - libperl-dev
+      - libdbi-perl
+      - libdbd-mysql-perl
+      - libdbd-pg-perl
+      - libfrontier-rpc-perl
+      - libterm-readline-gnu-perl
+      - libberkeleydb-perl
+      - libxml2
+      - libxml2-dev
+      - libpcre3
+      - libpcre3-dev
+      - subversion
+      - ngrep
+
+  - name: 'Create opensips user'
+    user: name=opensips
+          shell=/sbin/nologin
+          home=/usr/local/etc/opensips
+
+  - name: 'Clone opensips repo'
+    git: repo=git://github.com/OpenSIPS/opensips.git
+         dest=/usr/src/opensips_{{ opensips_major_ver }}_{{ opensips_minor_ver }}
+         version={{ opensips_major_ver }}.{{ opensips_minor_ver }}
+         accept_hostkey=yes
+    register: gitclone
+
+  - name: 'Setup makefile'
+    template: src=makefile.conf.j2
+              dest=/usr/src/opensips_{{ opensips_major_ver }}_{{ opensips_minor_ver }}/Makefile.conf
+              mode=0644
+
+  - name: 'Clean opensips'
+    command: "make mantainer-clean"
+    args:
+      chdir: "/usr/src/opensips_{{ opensips_major_ver }}_{{ opensips_minor_ver }}"
+    when: gitclone.changed
+
+  - name: 'Make opensips core'
+    command: "make"
+    args:
+      chdir: "/usr/src/opensips_{{ opensips_major_ver }}_{{ opensips_minor_ver }}"
+    when: gitclone.changed
+
+  - name: 'Make opensips modules'
+    command: "make include_modules=\"{{ opensips_modules }}\" modules"
+    args:
+      chdir: "/usr/src/opensips_{{ opensips_major_ver }}_{{ opensips_minor_ver }}"
+    when: gitclone.changed
+
+  - name: 'Install opensips and modules'
+    command: "make include_modules=\"{{ opensips_modules }}\" install"
+    args:
+      chdir: "/usr/src/opensips_{{ opensips_major_ver }}_{{ opensips_minor_ver }}"
+    when: gitclone.changed
+
+  - name: 'Create opensips pid directory'
+    file: path=/var/run/opensips
+          state=directory
+          recurse=yes
+
+  - name: 'Create opensips tls directory'
+    file: path=/usr/local/etc/opensips/tls
+          state=directory
+          recurse=yes
+
+  - name: 'Create ca.conf'
+    template: src=ca.conf.j2
+              dest=/usr/local/etc/opensips/tls/ca.conf
+              mode=0600
+
+  - name: 'Ensures usr local etc opensips dir exists'
+    file: path=/usr/local/etc/opensips
+          state=directory
+          recurse=yes
+
+  - name: 'Setup opensips.cfg'
+    template: src=opensips.cfg.j2
+              dest=/usr/local/etc/opensips/opensips.cfg
+              mode=0644
+
+  - name: 'Setup opensipsctlrc'
+    template: src=opensipsctlrc.j2
+              dest=/usr/local/etc/opensips/opensipsctlrc
+              mode=0644
+
+  - name: 'Supervisor script for opensips'
+    template: src=opensips.conf.j2
+              dest=/etc/supervisor/conf.d/opensips.conf
+              mode=0644

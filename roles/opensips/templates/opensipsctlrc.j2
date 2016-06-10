@@ -1,0 +1,20 @@
+# $Id$
+#
+# {{ ansible_managed }}
+#
+# The OpenSIPS configuration file for the control tools.
+SIP_DOMAIN=snerted.com
+DBENGINE=MYSQL
+DBPORT=3306
+DBHOST=localhost
+DBNAME=opensips
+DBRWUSER=opensips
+DBRWPW="opensipsrw"
+DBROOTUSER="root"
+ALIASES_TYPE="DB"
+CTLENGINE="FIFO"
+OSIPS_FIFO="/tmp/opensips_fifo"
+VERIFY_ACL=1
+ACL_GROUPS="local ld int voicemail free-pstn"
+#STORE_PLAINTEXT_PW=0
+PID_FILE=/var/run/opensips/opensips.pid

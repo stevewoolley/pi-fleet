@@ -1,0 +1,9 @@
+[program:garage-monitor]
+command={{ webapps_dir }}/gpio-subscriber.py -e {{ aws_iot_endpoint }} -t $aws/things/{{ inventory_hostname }}/shadow/update/accepted -s {{ name }} -i {{ relay_pin }}
+directory={{ webapps_dir }}
+autostart=true
+autorestart=true
+stdout_logfile=/var/log/iot.log
+stderr_logfile=/var/log/iot.log
+redirect_stderr=true
+exitcodes=0

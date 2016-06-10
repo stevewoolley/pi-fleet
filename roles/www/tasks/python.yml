@@ -1,0 +1,27 @@
+---
+- name: 'Install base python packages'
+  action: apt pkg={{item}} state=installed
+  with_items:
+    - python-dev
+    - python-pip
+    - python-virtualenv
+    - supervisor
+    - python-bcrypt
+    - libffi-dev
+    - python-boto
+    - python-botocore
+
+- name: 'Install supplemental python packages'
+  action: pip name={{item}} virtualenv={{ webapps_dir }}/{{ app_name }}/venv state=present
+  with_items:
+    - flask-bcrypt
+    - flask-mail
+    - flask-sqlalchemy
+    - flask-wtf
+    - sqlalchemy-migrate
+    - flask-whooshalchemy
+    - requests
+    - pytz
+    - boto3
+    - pygal
+

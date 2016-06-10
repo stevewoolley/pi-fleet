@@ -1,0 +1,402 @@
+# {{ ansible_managed }}
+# OpenSIPS residential configuration script
+#
+
+####### Global Parameters #########
+
+log_level=3
+log_stderror=no
+log_facility=LOG_LOCAL0
+children=4
+listen=udp:{{ ansible_eth0.ipv4.address }}:5060
+listen=tcp:{{ ansible_eth0.ipv4.address }}:5060
+
+####### Modules Section ########
+
+#set module path
+mpath="/usr/local/lib/opensips/modules/"
+
+#### SIGNALING module
+loadmodule "signaling.so"
+
+#### StateLess module
+loadmodule "sl.so"
+
+#### Transaction Module
+loadmodule "tm.so"
+#modparam("tm", "fr_timeout", 5)
+#modparam("tm", "fr_inv_timeout", 30)
+#modparam("tm", "restart_fr_on_each_reply", 0)
+#modparam("tm", "onreply_avp_mode", 1)
+modparam("tm", "timer_partitions", 4)
+
+#### Record Route Module
+loadmodule "rr.so"
+modparam("rr", "append_fromtag", 0)
+
+#### MAX ForWarD module
+loadmodule "maxfwd.so"
+
+#### SIP MSG OPerationS module
+loadmodule "sipmsgops.so"
+
+#### FIFO Management Interface
+loadmodule "mi_fifo.so"
+modparam("mi_fifo", "fifo_name", "/tmp/opensips_fifo")
+modparam("mi_fifo", "fifo_mode", 0666)
+
+#### URI module
+loadmodule "uri.so"
+modparam("uri", "use_uri_table", 0)
+
+#### MYSQL module
+loadmodule "db_mysql.so"
+
+#### USeR LOCation module
+loadmodule "usrloc.so"
+modparam("usrloc", "nat_bflag", "NAT")
+modparam("usrloc", "db_mode",   2)
+modparam("usrloc", "db_url", "mysql://{{ db_username }}:{{ db_password }}@{{ db_host }}/{{ db_database }}")
+modparam("usrloc", "timer_interval", 60)
+
+#### REGISTRAR module
+loadmodule "registrar.so"
+modparam("registrar", "tcp_persistent_flag", "TCP_PERSISTENT")
+modparam("registrar", "received_avp", "$avp(received_nh)")
+
+#### AVPOPS module
+loadmodule "avpops.so"
+modparam("avpops", "db_url", "mysql://{{ db_username }}:{{ db_password }}@{{ db_host }}/{{ db_database }}")
+
+#### ACCounting module
+loadmodule "acc.so"
+modparam("acc", "early_media", 0)
+modparam("acc", "report_cancels", 0)
+modparam("acc", "detect_direction", 0)
+modparam("acc", "db_url", "mysql://{{ db_username }}:{{ db_password }}@{{ db_host }}/{{ db_database }}")
+
+#### DISPATCHER module
+loadmodule "dispatcher.so"
+modparam("dispatcher", "db_url", "mysql://{{ db_username }}:{{ db_password }}@{{ db_host }}/{{ db_database }}")
+modparam("dispatcher", "ds_ping_method", "OPTIONS")
+modparam("dispatcher", "ds_probing_mode", 0)
+modparam("dispatcher", "ds_ping_interval", 30)
+
+#### AUTHentication modules
+loadmodule "auth.so"
+loadmodule "auth_db.so"
+modparam("auth_db", "calculate_ha1", yes)
+modparam("auth_db", "password_column", "password")
+modparam("auth_db|uri", "db_url", "mysql://{{ db_username }}:{{ db_password }}@{{ db_host }}/{{ db_database }}")
+modparam("auth_db", "load_credentials", "")
+
+#### ALIAS module
+loadmodule "alias_db.so"
+modparam("alias_db", "db_url", "mysql://{{ db_username }}:{{ db_password }}@{{ db_host }}/{{ db_database }}")
+
+#### DOMAIN module
+loadmodule "domain.so"
+modparam("domain", "db_url", "mysql://{{ db_username }}:{{ db_password }}@{{ db_host }}/{{ db_database }}")
+modparam("domain", "db_mode", 1)   # Use caching
+modparam("auth_db|usrloc|uri", "use_domain", 1)
+
+#### PRESENCE modules
+loadmodule "xcap.so"
+loadmodule "presence.so"
+loadmodule "presence_xml.so"
+modparam("xcap|presence", "db_url", "mysql://{{ db_username }}:{{ db_password }}@{{ db_host }}/{{ db_database }}")
+modparam("presence_xml", "force_active", 1)
+modparam("presence", "server_address", "sip:{{ ansible_eth0.ipv4.address }}:5060")
+
+#### DIALOG module
+loadmodule "dialog.so"
+modparam("dialog", "dlg_match_mode", 1)
+modparam("dialog", "default_timeout", 21600)  # 6 hours timeout
+modparam("dialog", "db_mode", 2)
+modparam("dialog", "db_url", "mysql://{{ db_username }}:{{ db_password }}@{{ db_host }}/{{ db_database }}")
+
+####  NAT modules
+loadmodule "nathelper.so"
+modparam("nathelper", "natping_interval", 10)
+modparam("nathelper", "ping_nated_only", 1)
+modparam("nathelper", "sipping_bflag", "SIP_PING_FLAG")
+modparam("nathelper", "sipping_from", "sip:pinger@127.0.0.1")
+modparam("nathelper", "received_avp", "$avp(received_nh)")
+
+####  DIALPLAN module
+loadmodule "dialplan.so"
+modparam("dialplan", "db_url", "mysql://{{ db_username }}:{{ db_password }}@{{ db_host }}/{{ db_database }}")
+
+####  DYNAMIC ROUTING module
+loadmodule "drouting.so"
+modparam("drouting", "db_url", "mysql://{{ db_username }}:{{ db_password }}@{{ db_host }}/{{ db_database }}")
+
+loadmodule "proto_udp.so"
+loadmodule "proto_tcp.so"
+
+####### Routing Logic ########
+
+# main request routing logic
+
+route{
+	force_rport();
+	if (nat_uac_test("23")) {
+		if (is_method("REGISTER")) {
+			fix_nated_register();
+			setbflag(NAT);
+			setbflag(SIP_PING_FLAG);
+		} else {
+			fix_nated_contact();
+			setflag(NAT);
+		}
+	}
+	if (!mf_process_maxfwd_header("10")) {
+		sl_send_reply("483","Too Many Hops");
+		exit;
+	}
+	if (has_totag()) {
+		# sequential request withing a dialog should
+		# take the path determined by record-routing
+		if (loose_route()) {
+			# validate the sequential request against dialog
+			if ( $DLG_status!=NULL && !validate_dialog() ) {
+				xlog("In-Dialog $rm from $si (callid=$ci) is not valid according to dialog\n");
+				## exit;
+			}
+			if (is_method("BYE")) {
+				# do accounting even if the transaction fails
+				do_accounting("db","failed");
+			} else if (is_method("INVITE")) {
+				record_route();
+			}
+			# route it out to whatever destination was set by loose_route()
+			# in $du (destination URI).
+			route(RELAY);
+		} else {
+			if (is_method("SUBSCRIBE") && $rd == "{{ ansible_eth0.ipv4.address }}:5060") {
+				# in-dialog subscribe requests
+				route(HANDLE_PRESENCE);
+				exit;
+			}
+			if ( is_method("ACK") ) {
+				if ( t_check_trans() ) {
+					t_relay();
+					exit;
+				} else {
+					exit;
+				}
+			}
+			sl_send_reply("404","Not here");
+		}
+		exit;
+	}
+
+	# CANCEL processing
+	if (is_method("CANCEL")) {
+		if (t_check_trans()) t_relay();
+		exit;
+	}
+
+	t_check_trans();
+
+	if ( !(is_method("REGISTER") || is_from_gw() ) ) {
+		if (is_from_local())
+		{
+			# authenticate if from local subscriber
+			# authenticate all initial non-REGISTER request that pretend to be
+			# generated by local subscriber (domain from FROM URI is local)
+			if (!proxy_authorize("", "subscriber")) {
+				proxy_challenge("", "0");
+				exit;
+			}
+			if (!db_check_from()) {
+				sl_send_reply("403","Forbidden auth ID");
+				exit;
+			}
+			consume_credentials();
+			# caller authenticated
+		} else {
+			# if caller is not local, then called number must be local
+			if (!is_uri_host_local()) {
+				send_reply("403","Rely forbidden");
+				exit;
+			}
+		}
+	}
+
+	# preloaded route checking
+	if (loose_route()) {
+		xlog("L_ERR", "Attempt to route with preloaded Route's [$fu/$tu/$ru/$ci]");
+		if (!is_method("ACK")) sl_send_reply("403","Preload Route denied");
+		exit;
+	}
+
+	# record routing
+	if (!is_method("REGISTER|MESSAGE")) record_route();
+
+	# account only INVITEs
+	if (is_method("INVITE")) {
+		# create dialog with timeout
+		if ( !create_dialog("B") ) {
+			send_reply("500","Internal Server Error");
+			exit;
+		}
+		do_accounting("db");
+	}
+
+	if (!is_uri_host_local()) {
+		append_hf("P-hint: outbound\r\n");
+		route(RELAY);
+	}
+
+	# requests for my domain
+	if( is_method("PUBLISH|SUBSCRIBE")) route(HANDLE_PRESENCE);
+
+	if (is_method("REGISTER")) {
+		# authenticate the REGISTER requests
+		if (!www_authorize("", "subscriber")) {
+			www_challenge("", "0");
+			exit;
+		}
+		if (!db_check_to()) {
+			sl_send_reply("403","Forbidden auth ID");
+			exit;
+		}
+		if ( proto==TCP ||  0 ) setflag(TCP_PERSISTENT);
+		if (!save("location")) sl_reply_error();
+		exit;
+	}
+
+	if ($rU==NULL) {
+		# request with no Username in RURI
+		sl_send_reply("484","Address Incomplete");
+		exit;
+	}
+
+	# apply DB based aliases
+	alias_db_lookup("dbaliases");
+
+    if ( dp_translate("1", "$rU/$rU") ) {
+        # recognize and normalize to E.164
+
+        #################################################################
+        # Twilio specific
+        #################################################################
+
+        remove_hf("Call-ID");
+        append_hf("Call-ID: \"{{ caller_id }}\"\r\n");
+        remove_hf("To");
+        append_hf("To: <sip:+$rU@{{ sip_gateway }}>\r\n");
+        remove_hf("From");
+        append_hf("From: \"{{ caller_id }}\"<sip:{{ caller_id }}@{{ sip_gateway }}>\r\n");
+
+        #################################################################
+        # find a route
+        #################################################################
+
+        # via dynamic routing
+        # if ( !do_routing("10") ) {
+        #     send_reply("503","No route found");
+        #     exit;
+        # }
+
+        # via dispatcher
+        # if ( !ds_select_dst("1", "4") ) { # rewrite uri with PSTN domain
+        if ( !ds_select_domain("1", "4") ) {
+            send_reply("500","No Destination available");
+            exit;
+        }
+
+        #################################################################
+        xlog ("gateway is $ru \n");
+        #################################################################
+
+        # add NAT flag
+        if (isflagset(NAT)) {
+            xlog("add NAT flag");
+            add_rr_param(";nat=yes");
+        }
+
+        route(RELAY);
+    }
+
+	# do lookup with method filtering
+	if (!lookup("location","m")) {
+		if (!db_does_uri_exist()) {
+			send_reply("420","Bad Extension");
+			exit;
+		}
+        t_newtran();
+		t_reply("404", "Not Found");
+		exit;
+	}
+
+	if (isbflagset(NAT)) setflag(NAT);
+
+	# when routing via usrloc, log the missed calls also
+	do_accounting("db","missed");
+	route(RELAY);
+}
+
+route[RELAY] {
+	# for INVITEs enable some additional helper routes
+	if (is_method("INVITE")) {
+		t_on_branch("PER_BRANCH_OPS");
+		t_on_reply("HANDLE_NAT");
+		t_on_failure("GW_FAILOVER");
+	}
+	if (!t_relay()) {
+		sl_reply_error();
+	};
+	exit;
+}
+
+# Presence route
+route[HANDLE_PRESENCE]
+{
+	if (!t_newtran()) {
+		sl_reply_error();
+		exit;
+	}
+	if (is_method("PUBLISH")) {
+		handle_publish();
+	}
+	else
+	if (is_method("SUBSCRIBE")) {
+		handle_subscribe();
+	}
+	exit;
+}
+
+branch_route[PER_BRANCH_OPS] {
+	xlog("new branch at $ru\n");
+}
+
+onreply_route[HANDLE_NAT] {
+	if (isflagset(NAT)) {
+		fix_nated_contact();
+	}
+	xlog("incoming reply\n");
+}
+
+failure_route[GW_FAILOVER] {
+	if (t_was_cancelled()) {
+		exit;
+	}
+	# failure detection with redirect to next available trunk
+	if (t_check_status("(408)|([56][0-9][0-9])")) {
+		xlog("Failed trunk $rd/$du detected \n");
+		if ( ds_next_dst() ) {
+			t_on_failure("GW_FAILOVER");
+			t_relay();
+			exit;
+		}
+		send_reply("500","All GW are down");
+	}
+}
+
+local_route {
+	if (is_method("BYE") && $DLG_dir=="UPSTREAM") {
+		acc_db_request("200 Dialog Timeout", "acc");
+	}
+}

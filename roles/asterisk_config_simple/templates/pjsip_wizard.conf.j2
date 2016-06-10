@@ -1,0 +1,18 @@
+; {{ ansible_managed }}
+
+[twilio0]
+type = wizard
+sends_auth = yes
+remote_hosts = {{ twilio_domain }}
+outbound_auth/username = {{ twilio_trunk_username }}
+outbound_auth/password = {{ twilio_trunk_password }}
+endpoint/context = DCS-Incoming
+endpoint/disallow = all
+endpoint/allow = ulaw
+aor/qualify_frequency = 15
+;
+sends_registrations = no
+server_uri_pattern = sip:${REMOTE_HOST}\;transport=tcp
+client_uri_pattern = sip:${REMOTE_HOST}\;transport=tcp
+contact_pattern = sip:${REMOTE_HOST}\;transport=tcp
+

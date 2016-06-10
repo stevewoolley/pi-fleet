@@ -1,0 +1,9 @@
+---
+- name: 'Install rtpproxy packages'
+  action: apt pkg={{item}} state=installed
+  with_items:
+    - rtpproxy
+
+- name: 'Configure rtpproxy'
+  template: src=rtpproxy.j2 dest=/etc/default/rtpproxy mode=0644
+

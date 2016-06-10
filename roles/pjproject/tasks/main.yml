@@ -1,0 +1,18 @@
+---
+  - name: 'Clone pjproject repo'
+    git: repo=https://github.com/asterisk/pjproject
+         dest=/usr/src/pjproject
+         accept_hostkey=yes
+    register: gitclone
+
+  - name: 'Build and install pjsip'
+    command: "{{ item }}"
+    args:
+      chdir: "/usr/src/pjproject"
+    with_items:
+      - ./configure --prefix=/usr --enable-shared --disable-sound --disable-resample --disable-video
+      - make dep
+      - make
+      - make install
+      - ldconfig
+    when: gitclone.changed

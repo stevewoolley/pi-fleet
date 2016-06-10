@@ -1,0 +1,29 @@
+---
+- name: 'Install dependencies packages'
+  action: apt pkg={{item}} state=installed
+  with_items:
+    - apache2
+    - php5
+    - php5-mysql
+    - php5-xmlrpc
+    - php-pear
+
+- name: 'Download web files'
+  command: “svn checkout svn://svn.code.sf.net/p/opensips-cp/code/trunk opensips-cp”
+  args:
+    chdir: "/var/www"
+
+- name: 'Set permissions'
+  command: “chown -R www-data:www-data /var/www/opensips-cp”
+  args:
+    chdir: "/var/www"
+
+- name: 'Pear install MDB2'
+  command: “pear install MDB2”
+
+- name: 'Pear install MDB2#mysql'
+  command: “pear install MDB2#mysql”
+
+- name: 'Pear install log'
+  command: “pear install log”
+

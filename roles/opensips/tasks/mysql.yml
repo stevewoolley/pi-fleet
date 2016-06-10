@@ -1,0 +1,8 @@
+---
+- name: 'Create database schema'
+  command: opensipsdbctl create
+  args:
+  chdir: "/usr/local/etc/opensips"
+
+- name: 'Preload data'
+  include: preload.yml

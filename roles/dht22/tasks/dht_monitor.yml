@@ -1,0 +1,13 @@
+---
+- name: 'Clone latest IoT'
+  git: repo=https://github.com/stevewoolley/IoT.git
+      dest=/home/pi/IoT
+      accept_hostkey=yes
+  become: yes
+  become_user: pi
+
+- name: 'Create dht_monitor script'
+  template: src=dht_monitor.sh.j2 dest=/home/pi/dht_monitor.sh mode=0755 owner=pi group=pi
+
+- name: 'Crontab entry for dht monitor'
+  cron: name="dht monitor" minute="*/5" job="/home/pi/dht_monitor.sh"

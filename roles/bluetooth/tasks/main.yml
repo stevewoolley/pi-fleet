@@ -1,0 +1,33 @@
+---
+- name: 'Clone latest IoT'
+  git: repo=https://github.com/stevewoolley/IoT.git
+      dest=/home/pi/IoT
+      accept_hostkey=yes
+  become: yes
+  become_user: pi
+
+- name: 'Install bluetooth requirements'
+  action: apt pkg={{item}} state=installed
+  with_items:
+    - libusb-dev
+    - libdbus-1-dev
+    - libdbus-glib-1-dev
+    - libglib2.0-dev
+    - libudev-dev
+    - libical-dev
+    - libreadline-dev
+    - bluez
+    - bluez-tools
+    - bluez-firmware
+    - bluetooth
+    - libbluetooth-dev
+
+- name: 'Install Pybluez python package'
+  pip: name=pybluez executable=pip version=0.22 state=present
+
+
+- name: 'Add ibeacon init.d daemon script'
+  action: template src=ibeacon.conf.j2 dest=/etc/init.d/ibeacon mode=0755
+
+- name: 'Ensure ibeacon daemon is started'
+  action: service name=ibeacon state=started enabled=yes

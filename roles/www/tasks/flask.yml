@@ -1,0 +1,26 @@
+---
+- name: 'Install flask packages'
+  action: apt pkg={{item}} state=installed
+  with_items:
+    - python-flask
+    - python-flask-sqlalchemy
+    - python-flask-login
+    - python-flaskext.wtf
+    - uwsgi-plugin-python
+
+- name: 'Ensure log directory'
+  action: file dest={{ webapps_dir }}/{{ app_name }}/log state=directory
+
+- name: 'Deploy code from repository'
+  action: git repo={{ repo_url }} dest={{ webapps_dir }}/{{ app_name }}/src remote={{ repo_remote }} version={{ repo_version }}
+  notify:
+    - restart uwsgi app
+
+- name: 'Install dependencies into virtualenv'
+  action: pip requirements={{ webapps_dir }}/{{ app_name }}/src/requirements.txt virtualenv={{ webapps_dir }}/{{ app_name }}/venv state=present
+
+- name: 'Modify flask uwsgi configuration'
+  template: src=config.py.j2 dest={{ webapps_dir }}/{{ app_name }}/src/config.py.example
+
+- name: 'Modify supervisor configuration'
+  template: src=uwsgi.conf.j2 dest=/etc/supervisor/conf.d/uwsgi.conf

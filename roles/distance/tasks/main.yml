@@ -1,0 +1,14 @@
+---
+- name: 'Clone latest IoT'
+  git: repo=https://github.com/stevewoolley/IoT.git
+      dest=/home/pi/IoT
+      accept_hostkey=yes
+  become: yes
+  become_user: pi
+  notify:
+    - restart supervisord
+
+- name: 'Supervisor script for distance monitor'
+  template: src=distance-monitor.conf.j2 dest=/etc/supervisor/conf.d/distance-monitor.conf mode=0644
+  notify:
+    - restart supervisord

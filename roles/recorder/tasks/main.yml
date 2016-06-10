@@ -1,0 +1,24 @@
+---
+- name: 'Clone latest IoT'
+  git: repo=https://github.com/stevewoolley/IoT.git
+      dest=/home/pi/IoT
+      accept_hostkey=yes
+  become: yes
+  become_user: pi
+  notify:
+    - restart supervisord
+
+- name: 'Install required packages'
+  action: apt pkg={{item}} state=installed
+  with_items:
+    - libav-tools
+    - lame
+    - python-alsaaudio
+
+- name: 'create recorder supervisord confs'
+  template: src=recorder-monitor.conf.j2 dest=/etc/supervisor/conf.d/recorder-monitor.conf mode=0644
+  notify:
+    - restart supervisord
+
+- name: 'create alsa-base confs'
+  template: src=alsa-base.conf.j2 dest=/etc/modprobe.d/alsa-base.conf mode=0644

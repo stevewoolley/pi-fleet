@@ -1,0 +1,8 @@
+[program:opensips]
+command = /usr/local/sbin/opensips -F -P /var/run/opensips/opensips.pid -m {{ opensips_shared_mem }} -M {{ opensips_pkg_mem }} -u {{ opensips_user }} -g {{ opensips_group }}
+autostart=true
+autorestart=true
+stdout_logfile=/var/log/%(program_name)s.log
+stderr_logfile=/var/log/%(program_name)s.log
+redirect_stderr=true
+exitcodes=0

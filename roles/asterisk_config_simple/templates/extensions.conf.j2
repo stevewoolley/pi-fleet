@@ -1,0 +1,97 @@
+; {{ ansible_managed }}
+
+[globals]
+
+[Hints]
+; Allow dynamic hint creation for every extension.
+exten = _11XX,hint,PJSIP/${EXTEN}
+
+[Features]
+; Extension to check user voicemail. We don't requre the user to enter
+; their pincode.
+exten = 8000,1,Verbose(1, "User ${CALLERID(num)} dialed the voicemail feature.")
+ same = n,VoiceMailMain(${CALLERID(num)}@default)
+ same = n,Hangup()
+
+;Extension to enter a conference intended only for employees
+exten = 6000,1,Verbose(1, "User ${CALLERID(num)} dialed the employee conference.")
+ same = n,Confbridge(employees)
+ same = n,Hangup()
+
+;Extension to enter a conference intended for employees and customers
+exten = 6500,1,Verbose(1, "User ${CALLERID(num)} dialed the employee/customer mixed conference.")
+ same = n,Confbridge(mixed)
+ same = n,Hangup()
+
+[Dialing-Errors]
+; Handle any extensions dialed internally that don't otherwise exist.
+; Comment out or remove this extension if you would rather have the calls
+; ignored.
+exten = _X.,1,Verbose(1, "User ${CALLERID(num)} dialed an invalid number.")
+ same = n,Playback(pbx-invalid)
+ same = n,Hangup()
+
+[Internal-Setup]
+; Here we capture internal calls to do anything we need to do before sending
+; them onto all the possible internal locations. Such as disabling CDR on
+; internal to internal calls.
+exten = _X.,1,NoOp()
+ same = n,Set(CDR_PROP(disable)=1)
+ same = n,Goto(Internal-Main,${EXTEN},1)
+
+; The Internal-Main context provides a way for internal callers to get access to most
+; features and functions configured for them. External callers may be sent
+; directly to some of the contexts you see included here, so the included
+; contexts are not necessarily internal only.
+[Internal-Main]
+exten = _X.,1,NoOp()
+include = Hints
+include = Features
+include = Dial-Users
+include = Dialing-Errors
+
+[Dial-Users]
+exten = _11XX,1,Verbose(1, "User ${CALLERID(num)} dialed ${EXTEN}.")
+ same = n,Set(SAC_DIALED_EXTEN=${EXTEN})
+ same = n,Gotoif($[${DEVICE_STATE(PJSIP/${EXTEN})} = BUSY]?dialed-BUSY,1:)
+ same = n,Dial(PJSIP/${EXTEN}${INTERNAL_DIAL_OPT})
+ same = n,Goto(dialed-${DIALSTATUS},1)
+
+exten = dialed-NOANSWER,1,NoOp()
+ same = n,Voicemail(${SAC_DIALED_EXTEN}@default,u)
+ same = n,Hangup()
+
+exten = dialed-BUSY,1,NoOp()
+ same = n,Voicemail(${SAC_DIALED_EXTEN}@default,b)
+ same = n,Hangup()
+
+exten = dialed-CHANUNAVAIL,1,NoOp()
+ same = n,Playback(pbx-invalid)
+ same = n,Hangup()
+
+exten = _dialed-.,1,Goto(dialed-NOANSWER,1)
+
+exten = h,1,Hangup()
+; Callers in the directory may dial 0 which will jump to the
+; 'o' extension.
+exten = o,1,Goto({{ operator_extension }})
+
+[Outbound-Dial]
+exten = _X.,1,Verbose(1, "Didn't match any restricted numbers, proceeding with outbound dial.")
+ same = n,Dial(PJSIP/+1${EXTEN}@twilio0)
+ same = n,Hangup()
+
+[Local]
+exten = _X.,1,NoOp()
+include = Internal-Setup
+
+[Long-Distance]
+include = Local
+exten = _NXXNXXXXXX,1,NoOp()
+ same = n,Goto(Outbound-Dial,${EXTEN},1)
+
+[DID-Extensions]
+exten = _+1NXXXXXXXXX,1,Dial(PJSIP/{{ operator_extension }})
+
+[ITSP-Incoming]
+include = DID-Extensions

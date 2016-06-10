@@ -1,0 +1,4 @@
+---
+- hosts: switch
+  roles:
+    - switch

@@ -1,0 +1,4 @@
+---
+- hosts: buzzer
+  roles:
+    - buzzer

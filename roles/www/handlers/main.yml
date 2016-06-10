@@ -1,0 +1,18 @@
+---
+- name: Restart nginx
+  service: name=nginx state=restarted
+
+- name: Start nginx
+  service: name=nginx state=started
+
+- name: restart uwsgi app
+  supervisorctl: name={{ uwsgi_app_service_name }} state=restarted config=/etc/supervisor/supervisord.conf
+  sudo: yes
+
+- name: start supervisord
+  service: name=supervisor state=started
+  sudo: yes
+
+- name: restart supervisord
+  service: name=supervisor state=restarted
+  sudo: yes

@@ -1,0 +1,30 @@
+---
+  - name: 'Configure asterisk.conf'
+    template: src=asterisk.conf.j2 dest=/etc/asterisk/asterisk.conf owner=root group=root mode=0644 backup=yes
+    notify:
+      - Restart asterisk
+
+  - name: 'Configure extensions.conf'
+    template: src=extensions.conf.j2 dest=/etc/asterisk/extensions.conf owner=root group=root mode=0644 backup=yes
+    notify:
+      - Restart asterisk
+
+  - name: 'Configure modules.conf'
+    template: src=modules.conf.j2 dest=/etc/asterisk/modules.conf owner=root group=root mode=0644 backup=yes
+    notify:
+      - Restart asterisk
+
+  - name: 'Configure pjsip.conf'
+    template: src=pjsip.conf.j2 dest=/etc/asterisk/pjsip.conf owner=root group=root mode=0644 backup=yes
+    notify:
+      - Restart asterisk
+
+  - name: 'Configure voicemail.conf'
+    template: src=voicemail.conf.j2 dest=/etc/asterisk/voicemail.conf owner=root group=root mode=0644 backup=yes
+    notify:
+      - Restart asterisk
+
+  - name: 'Configure musiconhold.conf'
+    template: src=musiconhold.conf.j2 dest=/etc/asterisk/musiconhold.conf owner=root group=root mode=0644 backup=yes
+    notify:
+      - Restart asterisk

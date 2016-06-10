@@ -1,0 +1,9 @@
+---
+- name: 'Install python and python packages'
+  action: apt pkg={{item}} state=installed
+  with_items:
+    - python
+    - python-dev
+    - python-pip
+    - python-openssl
+

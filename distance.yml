@@ -1,0 +1,4 @@
+---
+- hosts: distance
+  roles:
+    - distance

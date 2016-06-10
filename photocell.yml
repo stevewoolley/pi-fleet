@@ -1,0 +1,4 @@
+---
+- hosts: photocell
+  roles:
+    - photocell

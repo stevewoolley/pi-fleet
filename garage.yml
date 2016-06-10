@@ -1,0 +1,4 @@
+---
+- hosts: garage
+  roles:
+    - garage

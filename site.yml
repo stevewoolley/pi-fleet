@@ -1,0 +1,5 @@
+---
+- hosts: site
+  roles:
+    - common
+    - iot

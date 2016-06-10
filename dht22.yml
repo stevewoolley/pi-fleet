@@ -1,0 +1,4 @@
+---
+- hosts: dht22
+  roles:
+    - dht22

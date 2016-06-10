@@ -1,0 +1,15 @@
+---
+- name: 'Clone latest IoT'
+  git: repo=https://github.com/stevewoolley/IoT.git
+      dest=/home/pi/IoT
+      accept_hostkey=yes
+  become: yes
+  become_user: pi
+  notify:
+    - restart supervisord
+
+- name: 'Supervisor script for garage monitor'
+  template: src=garage-monitor.conf.j2 dest=/etc/supervisor/conf.d/garage-monitor.conf mode=0644
+
+- name: 'Supervisor script for sensor monitor'
+  template: src=sensor-monitor.conf.j2 dest=/etc/supervisor/conf.d/sensor-monitor.conf mode=0644

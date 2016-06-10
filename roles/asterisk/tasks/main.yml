@@ -1,0 +1,21 @@
+---
+  - name: 'Clone asterisk repo'
+    git: repo=https://gerrit.asterisk.org/asterisk
+         dest=/usr/src/asterisk
+         accept_hostkey=yes
+    register: gitclone
+
+  - name: 'Build and install asterisk'
+    command: "{{ item }}"
+    args:
+      chdir: "/usr/src/asterisk"
+    with_items:
+      - ./configure --with-pjproject
+      - make menuselect.makeopts
+      - make
+      - make uninstall
+      - make install
+      - make samples
+      - make config
+      - make install-logrotate
+    when: gitclone.changed

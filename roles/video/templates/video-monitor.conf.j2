@@ -1,0 +1,9 @@
+[program:video-monitor]
+command={{ webapps_dir }}/video-monitor.py -s "/accepted" -i {{ pir_pin }} -z {{ camera_rotate }} -e {{ aws_iot_endpoint}} -n {{ inventory_hostname }} -b {{ s3_bucket }} -t $aws/things/{{ inventory_hostname }}/shadow/update
+directory={{ webapps_dir }}
+autostart=true
+autorestart=true
+stdout_logfile=/var/log/iot.log
+stderr_logfile=/var/log/iot.log
+redirect_stderr=true
+exitcodes=0

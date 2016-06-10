@@ -1,0 +1,19 @@
+---
+- name: 'Clone latest IoT'
+  git: repo=https://github.com/stevewoolley/IoT.git
+      dest=/home/pi/IoT
+      accept_hostkey=yes
+  become: yes
+  become_user: pi
+  notify:
+    - restart supervisord
+
+- name: 'create led supervisord confs'
+  template: src=led-monitor.conf.j2 dest=/etc/supervisor/conf.d/led-monitor.conf mode=0644
+  notify:
+    - restart supervisord
+
+- name: 'create led yaml config'
+  template: src=led.yml.j2 dest=/home/pi/IoT/led.yml mode=0644
+  notify:
+    - restart supervisord

@@ -1,6 +1,0 @@
----
-- hosts: site
-  roles:
-    - common
-    - asterisk_common
-    - pjproject

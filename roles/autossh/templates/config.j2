@@ -1,0 +1,9 @@
+Host {{ local_tunnel_user }}
+    HostName      {{ remote_host }}
+    User          {{ remote_host_user }}
+    Port          22
+    IdentityFile  ~/.ssh/id_rsa
+    RemoteForward  {{ ssh_tunnel_remote_port }} localhost:{{ ssh_tunnel_local_port }}
+    ServerAliveInterval 30
+    ServerAliveCountMax 3
+    StrictHostKeyChecking no

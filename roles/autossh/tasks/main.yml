@@ -1,0 +1,21 @@
+---
+- name: 'Create tunnel user'
+  user: name={{ local_tunnel_user }} shell=/bin/false generate_ssh_key=yes
+
+- name: 'Configure sshd'
+  template: src=sshd_config.j2 dest=/etc/ssh/sshd_config owner=root group=root mode=0644 backup=yes
+  notify:
+    - Restart ssh
+
+- name: 'Configure tunnel config'
+  template: src=config.j2 dest=/home/{{ local_tunnel_user }}/.ssh/config owner={{ local_tunnel_user }} group={{ local_tunnel_user }} mode=0600
+
+- name: 'Install dependency packages'
+  action: apt pkg={{item}} state=installed
+  with_items:
+    - autossh
+
+- name: 'create autossh supervisord confs'
+  template: src=autossh.conf.j2 dest=/etc/supervisor/conf.d/autossh.conf mode=0644
+  notify:
+    - restart supervisord

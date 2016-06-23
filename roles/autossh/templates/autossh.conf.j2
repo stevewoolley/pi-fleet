@@ -1,0 +1,8 @@
+[program:autossh-ssh]
+command=autossh -M 0 -T -N tunnel
+user={{ local_tunnel_user }}
+numprocs=1
+autostart=true
+autorestart=true
+startsecs=0
+startretries=9999999

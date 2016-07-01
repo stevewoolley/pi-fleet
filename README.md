@@ -39,7 +39,6 @@
    - hosts (initially set hostname and IP address of new Pi)
    
    ```
-      # hosts
       [site]
         my_new_pi         ansible_host=192.168.1.24
    ```

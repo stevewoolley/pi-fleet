@@ -11,9 +11,9 @@
 1. Insert SD card into new Pi, connect live ethernet cable (from local network), and power up the Pi
 
 1. On your desktop/laptop, populate you network cache (example shown using my local network CIDR): 
-```bash
-nmap -sP 192.168.1.0/24
-```
+    ```bash
+    nmap -sP 192.168.1.0/24
+    ```
 1. Look for the IP address of your new Pi
 ```bash
 arp -na | grep b8:27:eb

@@ -42,3 +42,9 @@
       [site]
         my_new_pi         ansible_host=192.168.1.24
    ```
+
+1. Run ansible scripts:
+    ```
+    ansible-playbook -s site.yml --limit my_new_pi --ask-vault-pass
+    ```
+    *The ask-vault-pass is used if you are using an encrypted vault to store variables*

@@ -1,4 +1,4 @@
 ---
-- hosts: recorder
+- hosts: site
   roles:
     - recorder

@@ -1,9 +1,11 @@
-Host {{ local_tunnel_user }}
+{% for (key,value) in tunnels.iteritems()  %}
+Host tunnel-{{ value.name }}
     HostName      {{ remote_host }}
     User          {{ remote_host_user }}
     Port          22
     IdentityFile  ~/.ssh/id_rsa
-    RemoteForward  {{ ssh_tunnel_remote_port }} localhost:{{ ssh_tunnel_local_port }}
+    RemoteForward  {{ value.remote_port }} localhost:{{ value.local_port }}
     ServerAliveInterval 30
     ServerAliveCountMax 3
     StrictHostKeyChecking no
+{% endfor %}

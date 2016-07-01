@@ -95,4 +95,6 @@ exten = _NXXNXXXXXX,1,NoOp()
 exten = _+1NXXXXXXXXX,1,Dial(PJSIP/{{ operator_extension }})
 
 [ITSP-Incoming]
-include = DID-Extensions
+exten => +{{ twilio_number }},1,Log(WARNING, TWILIO)
+ same = n,Hangup()
+;include = DID-Extensions

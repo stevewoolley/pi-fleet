@@ -1,5 +1,5 @@
-[program:autossh-ssh]
-command=autossh -M 0 -T -N tunnel
+[program:autossh-{{ item.value.name }}]
+command=autossh -M 0 -T -N tunnel-{{ item.value.name }}
 user={{ local_tunnel_user }}
 numprocs=1
 autostart=true

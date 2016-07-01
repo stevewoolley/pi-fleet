@@ -48,3 +48,7 @@
     ansible-playbook -s site.yml --limit my_new_pi --ask-vault-pass
     ```
     *The ask-vault-pass is used if you are using an encrypted vault to store variables*
+    *Note: Had to disable bluetooth on new Pi 
+    ```
+    update-rc.d bluetooth disable
+    ```

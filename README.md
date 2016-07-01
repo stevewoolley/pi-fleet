@@ -14,6 +14,7 @@
     ```bash
     nmap -sP 192.168.1.0/24
     ```
+    
 1. Look for the IP address of your new Pi
     ```bash
     arp -na | grep b8:27:eb

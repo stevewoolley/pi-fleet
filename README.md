@@ -32,4 +32,8 @@
     cat ~/.ssh/id_rsa.pub | ssh pi@192.168.1.24 "mkdir -p ~/.ssh && cat >>  ~/.ssh/authorized_keys"
     ```
    You will be prompted for the password for the new Pi, **default: raspberry**
- 
+
+1. In pi-fleet working directory, update variables for site specific values:
+   - host_vars/*
+   - roles/*/vars
+   - hosts

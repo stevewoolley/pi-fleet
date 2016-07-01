@@ -36,10 +36,10 @@
 1. In pi-fleet working directory, update variables for site specific values:
    - host_vars/*
    - roles/*/vars
-   - hosts
-      initially set hostname and IP address of new Pi
-      ```
+   - hosts (initially set hostname and IP address of new Pi)
+   
+   ```
       # hosts
       [site]
         my_new_pi         ansible_host=192.168.1.24
-      ```
+   ```

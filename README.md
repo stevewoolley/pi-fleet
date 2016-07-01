@@ -21,6 +21,7 @@
     ```
    This will display the IP addresses of all the Pies in your local network, you may have to determine which one is your new Pi.
    *Let's assume the IP address of the new Pi is 192.168.1.24*   
+   
 1. Make sure you have generated your local ssh keys. If not:
     ```bash
     ssh-keygen
@@ -30,3 +31,4 @@
     cat ~/.ssh/id_rsa.pub | ssh pi@192.168.1.24 "mkdir -p ~/.ssh && cat >>  ~/.ssh/authorized_keys"
     ```
    You will be prompted for the password for the new Pi, **default: raspberry**
+ 

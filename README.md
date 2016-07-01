@@ -15,18 +15,18 @@
     nmap -sP 192.168.1.0/24
     ```
 1. Look for the IP address of your new Pi
-```bash
-arp -na | grep b8:27:eb
-```
+    ```bash
+    arp -na | grep b8:27:eb
+    ```
    This will display the IP addresses of all the Pies in your local network, you may have to determine which one is your new Pi.
    *Let's assume the IP address of the new Pi is 192.168.1.24*
    
 1. Make sure you have generated your local ssh keys. If not:
-```bash
-ssh-keygen
-```
+    ```bash
+    ssh-keygen
+    ```
 1. Copy your ssh keys onto the new Pi:
-```bash
-cat ~/.ssh/id_rsa.pub | ssh pi@192.168.1.24 "mkdir -p ~/.ssh && cat >>  ~/.ssh/authorized_keys"
-```
+    ```bash
+    cat ~/.ssh/id_rsa.pub | ssh pi@192.168.1.24 "mkdir -p ~/.ssh && cat >>  ~/.ssh/authorized_keys"
+    ```
    You will be prompted for the password for the new Pi, **default: raspberry**

@@ -20,7 +20,7 @@
         ```
         dtoverlay=dwc2
         ```
-        then save the file
+            then save the file
         
         1. Edit cmdline.txt, inserting **modules-load=dwc2,g_ether** after **rootwait**.
         something like:

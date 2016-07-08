@@ -39,9 +39,9 @@
         1. RNDIS/Ethernet Gadget should now show in Network Properties on Mac
         
         1. Should be able to ssh into the pi via:
-        ```bash
-        ssh pi@raspberrypi.local
-        ```
+            ```bash
+            ssh pi@raspberrypi.local
+            ```
         
         1. Enable internet on Pi Zero by starting Internet Sharing on Mac and setting **To computers using** to the **RNDIS** entry.
         

@@ -12,13 +12,13 @@
     - For Pi Zeros (without the built in ethernet adapter)
     
         1. With your fresh SD card still mounted, open up the boot partition (example: mac)
-        ```bash
-        cd /Volumes/boot
-        ```
+            ```bash
+            cd /Volumes/boot
+            ```
         1. Add to the tail end of the config.txt then save file:
-        ```
-        dtoverlay=dwc2
-        ```
+            ```
+            dtoverlay=dwc2
+            ```
         
         1. Edit cmdline.txt, inserting **modules-load=dwc2,g_ether** after **rootwait**.
         something like:

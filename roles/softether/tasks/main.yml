@@ -1,0 +1,28 @@
+---
+- name: 'Prerequisites'
+  action: apt pkg={{item}} state=installed
+  with_items:
+    - libreadline-dev
+    - openssl
+    - libssl-dev
+    - ncurses-dev
+
+- name: 'Clone latest'
+  git: repo=https://github.com/SoftEtherVPN/SoftEtherVPN.git
+       dest=/usr/src/SoftEtherVPN
+       accept_hostkey=yes
+
+- name: 'Configure'
+  shell: echo "1\n1" | ./configure
+  args:
+    chdir: "/usr/src/SoftEtherVPN"
+  register: configure
+
+- name: 'Compile'
+  command: "{{ item }}"
+  args:
+    chdir: "/usr/src/SoftEtherVPN"
+    creates: "/usr/bin/vpnserver"
+  with_items:
+    - make
+    - make install

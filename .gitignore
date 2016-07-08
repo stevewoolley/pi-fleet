@@ -68,5 +68,6 @@ ansible.cfg
 hosts
 *.retry
 roles/*/vars/main.yml
+roles/*/templates/*.secret
 host_vars/
 group_vars/

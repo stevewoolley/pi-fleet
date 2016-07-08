@@ -45,7 +45,7 @@
         
         1. Enable internet on Pi Zero by starting Internet Sharing on Mac and setting **To computers using** to the **RNDIS** entry.
         
-        1. This will probably break your current ssh connection into Pi. However, within a few seconds, the Pi shopuld reset interface with new IP address and be internet aware.
+        1. This will probably break your current ssh connection into Pi. However, within a few seconds, the Pi should reset network interface with new IP address and be internet aware.
         
     - For Pies with built-in ethernet adapters (everybody else)
         1. Insert SD card into new Pi, connect live ethernet cable (from local network), and power up the Pi

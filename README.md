@@ -67,8 +67,7 @@
     ssh-keygen
     ```
     
-1. Copy your ssh keys onto the new Pi:
-*insert your IP address (or maybe raspberrypi.local) for the example IP of 192.168.1.24
+1. Copy your ssh keys onto the new Pi (insert your IP address (or maybe raspberrypi.local) for the example IP of 192.168.1.24)
     ```bash
     cat ~/.ssh/id_rsa.pub | ssh pi@192.168.1.24 "mkdir -p ~/.ssh && cat >>  ~/.ssh/authorized_keys"
     ```

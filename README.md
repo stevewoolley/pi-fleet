@@ -15,7 +15,6 @@
         ```bash
         cd /Volumes/boot
         ```
-        
         1. Add to the tail end of the config.txt then save file:
         ```
         dtoverlay=dwc2

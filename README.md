@@ -23,14 +23,15 @@
         
         1. Edit cmdline.txt, inserting **modules-load=dwc2,g_ether** after **rootwait**.
         something like:
-        ```
-        dwc_otg.lpm_enable=0 console=serial0,115200 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 elevator=deadline fsck.repair=yes rootwait modules-load=dwc2,g_ether quiet init=/usr/lib/raspi-config/init_resize.sh
-        ```
+            ```
+            dwc_otg.lpm_enable=0 console=serial0,115200 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 elevator=deadline fsck.repair=yes rootwait modules-load=dwc2,g_ether quiet init=/usr/lib/raspi-config/init_resize.sh
+            ```
         
         1. Eject the mounted disk, something like (mounted disk may very, disk4 on my box):
-        ```bash
-        diskutil unmountDisk /dev/disk4
-        ```
+            ```bash
+            diskutil unmountDisk /dev/disk4
+            ```
+            
     - For Pies with built-in ethernet adapters (everybody else)
         1. Insert SD card into new Pi, connect live ethernet cable (from local network), and power up the Pi
     

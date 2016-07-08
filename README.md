@@ -31,7 +31,22 @@
             ```bash
             diskutil unmountDisk /dev/disk4
             ```
-            
+        
+        1. Insert SD card into new Pi and plus USB cable from Mac USB port into USB port on Pi Zero.
+        
+        1. Pi Zero should boot (drawing power from Mac USB port) within about 60 seconds
+        
+        1. RNDIS/Ethernet Gadget should now show in Network Properties on Mac
+        
+        1. Should be able to ssh into the pi via:
+        ```bash
+        ssh pi@raspberrypi.local
+        ```
+        
+        1. Enable internet on Pi Zero by starting Internet Sharing on Mac and setting **To computers using** to the **RNDIS** entry.
+        
+        1. This will probably break your current ssh connection into Pi. However, within a few seconds, the Pi shopuld reset interface with new IP address and be internet aware.
+        
     - For Pies with built-in ethernet adapters (everybody else)
         1. Insert SD card into new Pi, connect live ethernet cable (from local network), and power up the Pi
     

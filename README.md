@@ -11,6 +11,11 @@
 1. Join your Pi to your network:
     - For Pi Zeros (without the built in ethernet adapter)
     
+        1. Assuming use of Mac OS for install, become root on your Mac
+            ```bash
+            sudo -i
+            ```
+    
         1. With your fresh SD card still mounted, open up the boot partition (example: mac)
             ```bash
             cd /Volumes/boot

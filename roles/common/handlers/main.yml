@@ -4,19 +4,15 @@
 
 - name: 'start supervisord'
   service: name=supervisor state=started
-  sudo: yes
 
 - name: 'restart supervisord'
   service: name=supervisor state=restarted
-  sudo: yes
 
 - name: 'Restart rsyslog'
   service: name=rsyslog state=restarted
-  sudo: yes
 
 - name: 'Restart dhcpcd'
   service: name=dhcpcd state=restarted
-  sudo: yes
 
 - name: 'reboot'
   command: shutdown -r now

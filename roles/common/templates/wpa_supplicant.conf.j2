@@ -3,8 +3,11 @@
 country=US
 ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
 update_config=1
+
+{% for wifi in wifis %}
 network={
-	ssid="{{ wifi_ssid }}"
-	psk="{{ wifi_psk }}"
-	key_mgmt={{ wifi_key_mgmt  }}
+	ssid="{{ wifi.ssid }}"
+	psk="{{ wifi.psk }}"
+	key_mgmt={{ wifi.keymgmt }}
 }
+{% endfor %}

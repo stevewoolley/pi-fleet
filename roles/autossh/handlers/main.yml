@@ -1,12 +1,9 @@
 ---
 - name: 'Restart ssh'
   service: name=ssh state=restarted
-  sudo: yes
 
 - name: 'start supervisord'
   service: name=supervisor state=started
-  sudo: yes
 
 - name: 'restart supervisord'
   service: name=supervisor state=restarted
-  sudo: yes

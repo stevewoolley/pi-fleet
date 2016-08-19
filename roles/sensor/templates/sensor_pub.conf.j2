@@ -1,0 +1,9 @@
+[program:sensor_pub-{{ item.value.pin }}]
+command={{ webapps_dir }}/sensor_pub.py -e {{ aws_iot_endpoint }} -r {{ creds_location }}/rootCA.pem -c {{ creds_location }}/certificate.pem -k {{ creds_location }}/private.pem -t {{ flash_mqtt_topic }} -o "sensors/{{ inventory_hostname }}" -p {{ item.value.pin }} -s {{  item.value.name }}
+directory={{ webapps_dir }}
+autostart=true
+autorestart=true
+stdout_logfile={{ log_file }}
+stderr_logfile={{ log_file }}
+redirect_stderr=true
+exitcodes=0

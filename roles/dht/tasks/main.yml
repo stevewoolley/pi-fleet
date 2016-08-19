@@ -1,0 +1,14 @@
+---
+- name: 'Clone/Update latest repo'
+  git: repo={{ github_repo }}
+      dest={{ webapps_dir }}
+      accept_hostkey=yes
+  become: yes
+  become_user: "{{ user }}"
+
+- name: 'Create dht_monitor script'
+  template: src=dht_monitor.sh.j2 dest={{ user_dir }}/dht_monitor.sh mode=0755 owner={{ user }} group={{ group }}
+
+- name: 'Crontab entry for dht monitor'
+  become: yes
+  cron: name="dht monitor" minute="*/5" job="{{ user_dir }}/dht_monitor.sh"

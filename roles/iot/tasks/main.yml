@@ -44,7 +44,7 @@
     - force logrotate
 
 - name: 'Create pi_monitor script'
-  template: src=pi-monitor.sh.j2 dest=/home/pi/pi-monitor.sh mode=0755 owner=pi group=pi
+  template: src=pi_monitor.sh.j2 dest=/home/pi/pi-monitor.sh mode=0755 owner=pi group=pi
 
 - name: 'Crontab entry for pi monitor'
   cron: name="pi monitor" minute="*/5" job="/home/pi/pi-monitor.sh"

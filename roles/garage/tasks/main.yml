@@ -12,4 +12,4 @@
   template: src=garage-monitor.conf.j2 dest=/etc/supervisor/conf.d/garage-monitor.conf mode=0644
 
 - name: 'Supervisor script for sensor monitor'
-  template: src=sensor-monitor.conf.j2 dest=/etc/supervisor/conf.d/sensor-monitor.conf mode=0644
+  template: src=sensor_pub.conf.j2 dest=/etc/supervisor/conf.d/sensor-monitor.conf mode=0644

@@ -31,5 +31,5 @@
   notify:
     - apply raspi-config
 
-- name: 'change pi user password'
-  user: name=pi update_password=always password={{ pi_user_password }}
+- name: 'change user password'
+  user: name={{ user }} update_password=always password={{ pi_user_password }}

@@ -1,4 +1,4 @@
 ---
 - hosts: site
   roles:
-    - buzzer
+    - sensor

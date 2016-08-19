@@ -3,4 +3,4 @@
   sudo: yes
   roles:
     - common
-    - iot
+    - aws_iot

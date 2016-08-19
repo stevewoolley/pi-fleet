@@ -1,9 +1,0 @@
-[program:buzzer-monitor]
-command={{ webapps_dir }}/buzzer-monitor.py -e {{ aws_iot_endpoint }} -i {{ buzzer_pin }}
-directory={{ webapps_dir }}
-autostart=true
-autorestart=true
-stdout_logfile=/var/log/iot.log
-stderr_logfile=/var/log/iot.log
-redirect_stderr=true
-exitcodes=0

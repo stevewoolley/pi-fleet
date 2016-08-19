@@ -1,19 +1,15 @@
 ---
-- name: 'Clone latest IoT'
-  git: repo=https://github.com/stevewoolley/IoT.git
-      dest=/home/pi/IoT
+- name: 'Clone/Update latest repo'
+  git: repo={{ github_repo }}
+      dest={{ webapps_dir }}
       accept_hostkey=yes
   become: yes
-  become_user: pi
+  become_user: {{ user }}
   notify:
     - restart supervisord
 
 - name: 'create buzzer supervisord confs'
-  template: src=buzzer-monitor.conf.j2 dest=/etc/supervisor/conf.d/buzzer-monitor.conf mode=0644
-  notify:
-    - restart supervisord
-
-- name: 'create buzzer yaml config'
-  template: src=buzzer.yml.j2 dest=/home/pi/IoT/buzzer.yml mode=0644
+  template: src=buzzer_sub.conf.j2 dest=/etc/supervisor/conf.d/buzzer_sub.conf mode=0644
+  sudo: yes
   notify:
     - restart supervisord

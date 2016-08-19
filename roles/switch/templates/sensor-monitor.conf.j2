@@ -1,9 +1,0 @@
-[program:switch-monitor-{{ item.value.pin }}]
-command={{ webapps_dir }}/sensor-monitor.py -e {{ aws_iot_endpoint }} -o sensors/{{ inventory_hostname }} -i {{ item.value.pin }} -s {{  item.value.name }} -t $aws/things/{{ inventory_hostname }}/shadow/update
-directory={{ webapps_dir }}
-autostart=true
-autorestart=true
-stdout_logfile=/var/log/iot.log
-stderr_logfile=/var/log/iot.log
-redirect_stderr=true
-exitcodes=0

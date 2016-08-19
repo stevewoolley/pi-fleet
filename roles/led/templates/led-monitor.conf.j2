@@ -1,9 +1,0 @@
-[program:led-monitor]
-command={{ webapps_dir }}/led-monitor.py -s "/accepted" -e {{ aws_iot_endpoint}} -t $aws/things/{{ inventory_hostname }}/shadow/update
-directory={{ webapps_dir }}
-autostart=true
-autorestart=true
-stdout_logfile=/var/log/iot.log
-stderr_logfile=/var/log/iot.log
-redirect_stderr=true
-exitcodes=0

@@ -1,0 +1,14 @@
+---
+- name: 'Clone/Update latest repo'
+  git: repo={{ github_repo }}
+      dest={{ webapps_dir }}
+      accept_hostkey=yes
+  become: yes
+  become_user: "{{ user }}"
+
+- name: 'create sensor supervisord confs'
+  become: yes
+  template: src=sensor_pub.conf.j2 dest=/etc/supervisor/conf.d/sensor_pub-{{ item.value.pin }}.conf mode=0644
+  with_dict: "{{ switches }}"
+  notify:
+    - restart supervisord

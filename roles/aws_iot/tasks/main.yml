@@ -16,8 +16,8 @@
 - name: 'Install paho mqtt python package'
   pip: name=paho-mqtt executable=pip state=present
 
-- name: 'Install wiringpi2 python package'
-  pip: name=wiringpi2 executable=pip state=present
+- name: 'Install wiringpi python package'
+  pip: name=wiringpi executable=pip state=present
 
 - name: 'Install Adafruit DHT python package'
   pip: name=Adafruit_Python_DHT executable=pip state=present

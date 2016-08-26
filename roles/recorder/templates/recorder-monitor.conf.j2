@@ -1,5 +1,11 @@
 [program:recorder-monitor]
-command={{ webapps_dir }}/recorder-monitor.py --mp3 -b {{ s3_bucket }} -n {{ inventory_hostname }} -e {{ aws_iot_endpoint}} -t $aws/things/{{ inventory_hostname }}/shadow/update -s "/accepted"
+command={{ webapps_dir }}/recorder-monitor.py
+    --mp3 -b {{ s3_bucket }}
+    -n {{ inventory_hostname }}
+    -e {{ aws_iot_endpoint}}
+    -t $aws/things/{{ inventory_hostname }}/shadow/update
+    -s "/accepted"
+
 directory={{ webapps_dir }}
 autostart=true
 autorestart=true

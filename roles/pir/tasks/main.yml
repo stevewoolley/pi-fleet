@@ -8,7 +8,7 @@
 
 - name: 'create sensor supervisord confs'
   become: yes
-  template: src=sensor_pub.conf.j2 dest=/etc/supervisor/conf.d/sensor_pub-{{ item.value.pin }}.conf mode=0644
-  with_dict: "{{ sensors }}"
+  template: src=pir_pub.conf.j2 dest=/etc/supervisor/conf.d/pir_pub-{{ item.value.pin }}.conf mode=0644
+  with_dict: "{{ pirs }}"
   notify:
     - restart supervisord

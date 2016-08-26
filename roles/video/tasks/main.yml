@@ -1,27 +1,32 @@
 ---
-- name: 'Clone latest IoT'
-  git: repo=https://github.com/stevewoolley/IoT.git
-      dest=/home/pi/IoT
+- name: 'Clone/Update latest repo'
+  git: repo={{ github_repo }}
+      dest={{ webapps_dir }}
       accept_hostkey=yes
   become: yes
-  become_user: pi
-  notify:
-    - restart supervisord
+  become_user: "{{ user }}"
 
 - name: 'Ensure mem split'
+  become: yes
   pi_boot_config: config_vals=gpu_mem={{raspi_config_memory_split_gpu}}
   notify:
     - Apply raspi-config
     - Reboot
 
 - name: 'Install required packages'
+  become: yes
   action: apt pkg={{item}} state=installed
   with_items:
+    - imagemagick
+    - ttf-mscorefonts-installer
     - ffmpegthumbnailer
 
 - name: 'Set camera state'
   include: camera.yml
 
 - name: 'Supervisor script for video monitor'
-  template: src=video-monitor.conf.j2 dest=/etc/supervisor/conf.d/video-monitor.conf mode=0644
-
+  become: yes
+  template: src=video_sub.conf.j2 dest=/etc/supervisor/conf.d/video_sub.conf mode=0644
+  with_dict: "{{ videos }}"
+  notify:
+    - restart supervisord

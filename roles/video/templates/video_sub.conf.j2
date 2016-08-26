@@ -1,0 +1,20 @@
+[program:video_sub]
+command={{ webapps_dir }}/video_sub.py
+    -e {{ aws_iot_endpoint }}
+    -r {{ creds_location }}/rootCA.pem
+    -c {{ creds_location }}/certificate.pem
+    -k {{ creds_location }}/private.pem
+    -s {{ item.value.snapshot_topic }}
+    -t {{ item.value.recording_topic }}
+    -n {{ item.value.name }}
+    -b {{ item.value.s3_bucket }}
+    -a {{ item.value.archive_bucket }}
+    -z {{ item.value.camera_rotate }}
+
+directory={{ webapps_dir }}
+autostart=true
+autorestart=true
+stdout_logfile={{ log_file }}
+stderr_logfile={{ log_file }}
+redirect_stderr=true
+exitcodes=0

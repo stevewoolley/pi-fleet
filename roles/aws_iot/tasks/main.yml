@@ -1,11 +1,8 @@
 ---
 
-- name: 'Install python and python packages'
+- name: 'Install python packages'
   action: apt pkg={{item}} state=installed
   with_items:
-    - python
-    - python-dev
-    - python-pip
     - python-rpi.gpio
     - python-picamera
     - python-yaml
@@ -46,8 +43,9 @@
 
 - name: 'Configure logrotate'
   template: src=iot_logrotate.j2 dest=/etc/logrotate.d/iot owner={{ user }} group={{ group }} mode=0644
+  become: yes
   notify:
-    - force logrotate
+    - logrotate-apply
 
 - name: 'Create pi_monitor script'
   template: src=pi_monitor.sh.j2 dest={{ user_dir }}/pi_monitor.sh mode=0755 owner={{ user }} group={{ group }}

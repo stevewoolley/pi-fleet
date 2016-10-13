@@ -1,0 +1,3 @@
+---
+- name: 'Make host a docker swarm slave'
+  command: docker swarm join --token {{ docker_token}} {{ docker_leader}}:{{ docker_leader_port}}

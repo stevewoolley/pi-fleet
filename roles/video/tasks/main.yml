@@ -11,7 +11,6 @@
   pi_boot_config: config_vals=gpu_mem={{raspi_config_memory_split_gpu}}
   notify:
     - Apply raspi-config
-    - Reboot
 
 - name: 'Install required packages'
   become: yes

@@ -1,7 +1,14 @@
 ---
 - name: 'start supervisord'
+  become: yes
   service: name=supervisor state=started
 
 - name: 'restart supervisord'
+  become: yes
   service: name=supervisor state=restarted
+
+- name: Apply raspi-config
+  become: yes
+  command: raspi-config --apply-os-config
+
 

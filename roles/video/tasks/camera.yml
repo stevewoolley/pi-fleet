@@ -9,11 +9,9 @@
   pi_boot_config: config_vals=disable_camera_led=1
   notify:
     - Apply raspi-config
-    - Reboot
 
 - name: 'Camera - set state'
   become: yes
   pi_boot_config: config_vals=start_x={{raspi_config_enable_camera|int}}
   notify:
     - Apply raspi-config
-    - Reboot

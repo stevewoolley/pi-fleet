@@ -1,0 +1,23 @@
+#!/bin/sh
+export DISPLAY=:0.0
+
+if [ $# -eq 0 ]; then
+  echo usage: $(basename $0) "on|off|status"
+  exit 1
+fi
+
+if [ $1 = "off" ]; then
+  echo "Turning monitor off..."
+  /usr/bin/tvservice -o
+  echo "done"
+elif [ $1 = "on" ]; then
+  echo "Turning monitor on..."
+  /usr/bin/tvservice -p
+  /bin/chvt 6
+  /bin/chvt 7
+  echo "done"
+elif [ $1 = "status" ]; then
+  /usr/bin/tvservice -s
+else
+  echo usage: $(basename $0) "on|off|status"
+fi

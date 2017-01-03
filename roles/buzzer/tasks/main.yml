@@ -10,6 +10,6 @@
 
 - name: 'create buzzer supervisord confs'
   template: src=buzzer_sub.conf.j2 dest=/etc/supervisor/conf.d/buzzer_sub.conf mode=0644
-  sudo: yes
+  become: yes
   notify:
     - restart supervisord

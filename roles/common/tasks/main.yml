@@ -11,12 +11,11 @@
   action: apt upgrade=safe
 
 - name: 'Install common packages'
-  action: apt pkg={{item}} state=installed
+  action: apt pkg={{item}} state=latest
   with_items:
     - git
     - awscli
     - screen
-    - weavedconnectd
     - supervisor
     - lsb-release
     - build-essential
@@ -24,11 +23,8 @@
 - name: 'Install python and python libs'
   include: python.yml
 
-- name: 'Amazon config setup'
-  include: aws.yml
-
 - name: 'Fix rsyslog'
   include: rsyslog.yml
 
-- name: 'Fix ipv6 advertisements'
-  include: dhcpcd.yml
+- name: 'Amazon config setup'
+  include: aws.yml

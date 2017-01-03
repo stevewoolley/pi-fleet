@@ -6,12 +6,12 @@ iface lo inet loopback
 
 iface eth0 inet manual
 
-wireless-power off
-
 allow-hotplug wlan0
 iface wlan0 inet manual
     wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+wireless-power off
 
 allow-hotplug wlan1
 iface wlan1 inet manual
     wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+wireless-power off

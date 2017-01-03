@@ -1,14 +1,18 @@
 # {{ ansible_managed }}
 
-country=US
-ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+ctrl_interface=/var/run/wpa_supplicant
+ctrl_interface_group=0
 update_config=1
 
 {% for wifi in wifis %}
 network={
 	ssid="{{ wifi.ssid }}"
 	psk="{{ wifi.psk }}"
+	proto=WPA
 	key_mgmt={{ wifi.keymgmt }}
+	pairwise=TKIP
+	group=TKIP
 	priority={{ wifi.priority }}
+	id_str="{{ wifi.ssid }}"
 }
 {% endfor %}

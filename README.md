@@ -8,6 +8,15 @@
 
 1. Install image on available SD card https://www.raspberrypi.org/documentation/installation/installing-images/README.md
 
+1. As of the November 2016 release, Raspbian has the SSH server disabled by default. You will have to enable it manually. This is done using raspi-config:
+
+    ```
+    sudo raspi-config
+    ```
+    Select Interfacing options, then navigate to ssh, press Enter and select  Enable or disable ssh server.
+
+    Note: For headless setup, SSH can be enabled by placing a file named 'ssh', without any extension, onto the boot partition of the SD card.
+
 1. Join your Pi to your network:
     - For Pi Zeros (without the built in ethernet adapter)
     

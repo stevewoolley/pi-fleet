@@ -1,6 +1,13 @@
 #!/bin/bash
 
+if [ $# -ne 1 ]; then
+    echo $0: usage: pi_monitor party
+    exit 1
+fi
+
+party=$1
+
 cd {{ webapps_dir }}
-if [ -f "{{ webapps_dir }}/pi_monitor.py" ]; then
-  ./pi_monitor.py -e {{ aws_iot_endpoint }} -o "sensors/{{ inventory_hostname }}" -t "\$aws/things/{{ inventory_hostname }}/shadow/update" -r {{ webapps_dir }}/rootCA.pem -c {{ webapps_dir }}/certificate.pem -k {{ webapps_dir }}/private.pem
+if [ -f "{{ webapps_dir }}/monitor.py" ]; then
+  ./monitor.py -p $party -e {{ aws_iot_endpoint }} -r {{ creds_location }}/rootCA.pem -c {{ creds_location }}/certificate.pem -k {{ creds_location }}/private.pem
 fi

@@ -8,21 +8,14 @@
 - name: 'Set Pi Hostname'
   include: hosts.yml
 
-- name: 'Ensure filesystem is resized'
-  expand_fs:
-  when: raspi_config_expanded_filesystem
+- name: 'generate locale'
+  locale_gen: name={{ raspi_config_locale }} state=present
 
 - name: 'set locale'
   template: src=locale.j2 dest=/etc/default/locale
-  when: ansible_os_family == "Debian"
 
-- name: 'set locale gen'
-  template: src=locale.gen.j2 dest=/etc/locale.gen
-  when: ansible_os_family == "Debian"
-
-- name: 'create locale'
-  command: "locale-gen"
-  when: ansible_os_family == "Debian"
+- name: 'set local timezone'
+  timezone: name={{ raspi_config_timezone }}
 
 - name: 'Set additional config vars'
   pi_boot_config:

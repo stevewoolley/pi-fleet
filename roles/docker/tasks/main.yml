@@ -19,7 +19,7 @@
 
 - name: 'Install docker package'
   become: yes
-  action: apt pkg={{item}} state=installed
+  action: apt pkg={{item}} state=latest
   with_items:
     - docker-engine
 
@@ -28,4 +28,3 @@
   user: name='{{ user }}'
         groups=docker
         append=yes
-

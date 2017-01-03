@@ -8,22 +8,25 @@
     - python-yaml
 
 - name: 'Install AWSIoTPythonSDK python package'
-  pip: name=AWSIoTPythonSDK executable=pip state=present
+  pip: name=AWSIoTPythonSDK executable=pip state=latest
 
 - name: 'Install paho mqtt python package'
   pip: name=paho-mqtt executable=pip state=present
 
 - name: 'Install wiringpi python package'
-  pip: name=wiringpi executable=pip state=present
+  pip: name=wiringpi executable=pip state=latest
 
 - name: 'Install Adafruit DHT python package'
-  pip: name=Adafruit_Python_DHT executable=pip state=present
+  pip: name=Adafruit_Python_DHT executable=pip state=latest
 
 - name: 'Install gpiozero python package'
-  pip: name=gpiozero executable=pip state=present
+  pip: name=gpiozero executable=pip state=latest
 
 - name: 'Install boto3 python package'
-  pip: name=boto3 executable=pip state=present
+  pip: name=boto3 executable=pip state=latest
+
+- name: 'Install psutil python package'
+  pip: name=psutil executable=pip state=latest
 
 - name: 'Clone/Update latest repo'
   git: repo={{ github_repo }}
@@ -48,7 +51,10 @@
     - logrotate-apply
 
 - name: 'Create pi_monitor script'
-  template: src=pi_monitor.sh.j2 dest={{ user_dir }}/pi_monitor.sh mode=0755 owner={{ user }} group={{ group }}
+  template: src=pi_monitor.sh.j2 dest=/root/pi_monitor.sh mode=0755 owner={{ user }} group={{ group }}
 
-- name: 'Crontab entry for pi monitor'
-  cron: name="pi monitor" minute="*/5" job="{{ user_dir }}/pi_monitor.sh"
+- name: 'Crontab entry for pi monitor (fresh)'
+  cron: name="pi monitor fresh" minute="*/5" job="/root/pi_monitor.sh fresh"
+
+- name: 'Crontab entry for pi monitor (seldom)'
+  cron: name="pi monitor seldom" minute="0" hour="*" job="/root/pi_monitor.sh seldom"

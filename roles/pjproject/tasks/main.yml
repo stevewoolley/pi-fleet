@@ -10,7 +10,7 @@
     args:
       chdir: "/usr/src/pjproject"
     with_items:
-      - ./configure --prefix=/usr --enable-shared --disable-sound --disable-resample --disable-video
+      - ./configure --prefix=/usr --enable-shared --disable-sound --disable-resample --disable-camera
       - make dep
       - make
       - make install

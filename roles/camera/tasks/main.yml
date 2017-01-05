@@ -12,20 +12,16 @@
   notify:
     - Apply raspi-config
 
-- name: 'Install required packages'
-  become: yes
-  action: apt pkg={{item}} state=installed
-  with_items:
-    - imagemagick
-    - ttf-mscorefonts-installer
-    - ffmpegthumbnailer
-
 - name: 'Set camera state'
   include: camera.yml
 
-- name: 'Supervisor script for video monitor'
+- name: 'Crontab entry for camera sub'
   become: yes
-  template: src=video_sub.conf.j2 dest=/etc/supervisor/conf.d/video_sub.conf mode=0644
+  cron: name="camera sub " minute="0" hour="*" job="/usr/bin/aws s3 mv /tmp/ s3://archive.snerted.com/ --recursive --exclude '*' --include '*_garage1.png'"
+
+- name: 'Supervisor script for camera monitor'
+  become: yes
+  template: src=camera_sub.conf.j2 dest=/etc/supervisor/conf.d/camera_sub.conf mode=0644
   with_dict: "{{ videos }}"
   notify:
     - restart supervisord

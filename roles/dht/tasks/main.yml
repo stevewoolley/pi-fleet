@@ -11,4 +11,4 @@
 
 - name: 'Crontab entry for dht monitor'
   become: yes
-  cron: name="dht monitor" minute="*/5" job="{{ user_dir }}/dht_monitor.sh"
+  cron: name="dht monitor" minute="*/30" job="{{ user_dir }}/dht_monitor.sh"

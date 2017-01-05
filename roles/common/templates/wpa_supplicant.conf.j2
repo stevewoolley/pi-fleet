@@ -8,10 +8,10 @@ update_config=1
 network={
 	ssid="{{ wifi.ssid }}"
 	psk="{{ wifi.psk }}"
-	proto=WPA
+	proto=WPA RSN
 	key_mgmt={{ wifi.keymgmt }}
-	pairwise=TKIP
-	group=TKIP
+	pairwise=CCMP TKIP
+	group=CCMP TKIP
 	priority={{ wifi.priority }}
 	id_str="{{ wifi.ssid }}"
 }

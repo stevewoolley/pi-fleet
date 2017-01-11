@@ -17,7 +17,7 @@
 
 - name: 'Crontab entry for camera sub'
   become: yes
-  cron: name="camera sub " minute="0" hour="*" job="/usr/bin/aws s3 mv /tmp/ s3://archive.snerted.com/ --recursive --exclude '*' --include '*_garage1.png'"
+  cron: name="camera sub " minute="0" hour="*" job="/usr/bin/aws s3 mv /tmp/ s3://archive.snerted.com/ --recursive --exclude '*' --include '{{ snapshot_topic }}_*.png'"
 
 - name: 'Supervisor script for camera monitor'
   become: yes

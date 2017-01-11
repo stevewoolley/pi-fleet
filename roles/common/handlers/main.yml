@@ -1,24 +1,22 @@
 ---
 - name: 'apply raspi-config'
   command: raspi-config --apply-os-config
-
-- name: 'start supervisord'
-  service: name=supervisor state=started
-
-- name: 'restart supervisord'
-  service: name=supervisor state=restarted
+  become: true
 
 - name: 'Restart rsyslog'
   service: name=rsyslog state=restarted
+  become: true
 
 - name: 'Restart dhcpcd'
   service: name=dhcpcd state=restarted
+  become: true
 
 - name: 'reboot'
   command: shutdown -r now
   async: 0
   poll: 0
   ignore_errors: True
+  become: true
   notify:
     - wait for reboot
 

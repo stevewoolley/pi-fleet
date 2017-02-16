@@ -5,7 +5,7 @@ command={{ webapps_dir }}/led_sub.py
     -c {{ creds_location }}/certificate.pem
     -k {{ creds_location }}/private.pem
     -t {{ flash_mqtt_topic }}
-    -p {{ buzzer_pin }}
+    -p {{ led_pin }}
 
 directory={{ webapps_dir }}
 autostart=true

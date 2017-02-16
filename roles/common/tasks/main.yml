@@ -4,10 +4,10 @@
   tags:
     - bootstrap
 
-- name: 'Update APT package cache'
+- name: 'Update package cache'
   action: apt update_cache=yes
 
-- name: 'Upgrade APT to the latest packages'
+- name: 'Upgrade system to the latest packages'
   action: apt upgrade=safe
 
 - name: 'Install common packages'

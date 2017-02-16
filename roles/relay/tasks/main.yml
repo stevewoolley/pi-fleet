@@ -5,6 +5,8 @@
       accept_hostkey=yes
   become: yes
   become_user: "{{ user }}"
+  notify:
+    - restart supervisord
 
 - name: 'create relay supervisord confs'
   become: yes

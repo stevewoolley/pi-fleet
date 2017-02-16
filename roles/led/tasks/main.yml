@@ -4,9 +4,12 @@
       dest={{ webapps_dir }}
       accept_hostkey=yes
   become: yes
-  become_user: {{ user }}
+  become_user: "{{ user }}"
+  notify:
+    - restart supervisord
 
 - name: 'create led supervisord confs'
   template: src=led_sub.conf.j2 dest=/etc/supervisor/conf.d/led_sub.conf mode=0644
+  become: yes
   notify:
     - restart supervisord

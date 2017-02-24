@@ -9,18 +9,19 @@
     - python-rpi.gpio
     - python-picamera
     - python-yaml
+    - libav-tools
 
 - name: 'Install paho-mqtt python package'
-  pip: name=paho-mqtt executable=pip state=present
+  pip: name=paho-mqtt executable=pip state=latest
 
 - name: 'Install wiringpi2 python package'
-  pip: name=wiringpi2 executable=pip state=present
+  pip: name=wiringpi2 executable=pip state=latest
 
 - name: 'Install gpiozero python package'
-  pip: name=gpiozero executable=pip state=present
+  pip: name=gpiozero executable=pip state=latest
 
 - name: 'Install boto3 python package'
-  pip: name=boto3 executable=pip state=present
+  pip: name=boto3 executable=pip state=latest
 
 - name: 'Clone latest IoT'
   git: repo=https://github.com/stevewoolley/IoT.git

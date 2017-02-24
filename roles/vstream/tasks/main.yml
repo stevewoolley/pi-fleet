@@ -1,0 +1,59 @@
+---
+- name: 'Clone/Update latest repo'
+  git: repo={{ github_repo }}
+      dest={{ webapps_dir }}
+      accept_hostkey=yes
+  become: yes
+  become_user: "{{ user }}"
+
+- name: 'ffmpeg download and unpack'
+  become: yes
+  unarchive:
+    src: https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-armhf-32bit-static.tar.xz
+    dest: /opt
+    remote_src: True
+
+- name: 'symlink ffmpeg'
+  become: yes
+  file:
+    src: /opt/ffmpeg-3.2.4-armhf-32bit-static/ffmpeg
+    dest: /usr/local/bin/ffmpeg
+    state: link
+
+- name: 'symlink ffmpeg-10bit'
+  become: yes
+  file:
+    src: /opt/ffmpeg-3.2.4-armhf-32bit-static/ffmpeg-10bit
+    dest: /usr/local/bin/ffmpeg-10bit
+    state: link
+
+- name: 'symlink ffprobe'
+  become: yes
+  file:
+    src: /opt/ffmpeg-3.2.4-armhf-32bit-static/ffprobe
+    dest: /usr/local/bin/ffprobe
+    state: link
+
+- name: 'symlink ffserver'
+  become: yes
+  file:
+    src: /opt/ffmpeg-3.2.4-armhf-32bit-static/ffserver
+    dest: /usr/local/bin/ffserver
+    state: link
+
+- name: 'symlink qt-faststart'
+  become: yes
+  file:
+    src: /opt/ffmpeg-3.2.4-armhf-32bit-static/qt-faststart
+    dest: /usr/local/bin/qt-faststart
+    state: link
+
+- name: 'Set camera state'
+  include: camera.yml
+
+- name: 'Supervisor script for vstream monitor'
+  become: yes
+  template: src=vstream_sub.conf.j2 dest=/etc/supervisor/conf.d/vstream_sub.conf mode=0644
+  with_dict: "{{ streams }}"
+  notify:
+    - restart supervisord

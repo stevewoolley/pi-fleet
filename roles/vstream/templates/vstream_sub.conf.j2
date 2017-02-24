@@ -1,12 +1,12 @@
-[program:pir_pub-{{ item.value.pin }}]
-command={{ webapps_dir }}/pir_pub.py
+[program:vstream_sub]
+command={{ webapps_dir }}/vstream_sub.py
     -e {{ aws_iot_endpoint }}
     -r {{ creds_location }}/rootCA.pem
     -c {{ creds_location }}/certificate.pem
     -k {{ creds_location }}/private.pem
-    -t {{ item.value.topic }}
-    -s {{ item.value.name }}
-    -p {{ item.value.pin }}
+    -t {{ item.value.snapshot_topic }}
+    -z {{ item.value.camera_rotate }}
+
 directory={{ webapps_dir }}
 autostart=true
 autorestart=true

@@ -3,18 +3,12 @@
   git: repo={{ github_repo }}
       dest={{ webapps_dir }}
       accept_hostkey=yes
-  become: true
+  become: yes
   become_user: "{{ user }}"
 
 - name: 'create sensor supervisord confs'
-  become: true
   template: src=pir_pub.conf.j2 dest=/etc/supervisor/conf.d/pir_pub-{{ item.value.pin }}.conf mode=0644
   with_dict: "{{ pirs }}"
+  become: yes
   notify:
     - restart supervisord
-
-- name: 'Restart supervisor monitored pir apps'
-  supervisorctl:
-    name: pir_pub-{{ item.value.pin }}
-    state: restarted
-  with_dict: "{{ pirs }}"

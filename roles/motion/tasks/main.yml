@@ -1,0 +1,67 @@
+---
+- name: 'Install dependency packages'
+  become: yes
+  action: apt pkg={{item}} state=latest
+  with_items:
+    - autoconf
+    - automake
+    - build-essential
+    - pkgconf
+    - libtool
+    - libzip-dev
+    - libjpeg62
+    - libjpeg62-turbo-dev
+    - git
+    - libavformat-dev
+    - libavcodec-dev
+    - libavutil-dev
+    - libswscale-dev
+    - libavdevice-dev
+
+- name: 'Clone/Update latest repo'
+  git: repo=https://github.com/Motion-Project/motion.git
+      dest=/usr/src/motion
+      accept_hostkey=yes
+      force=yes
+  become: yes
+
+- name: 'Compile'
+  command: "{{ item }}"
+  args:
+    chdir: /usr/src/motion
+  with_items:
+    - autoreconf -fiv
+    - ./configure
+    - make
+    - make install
+  become: yes
+
+- name: 'Create motion config directory'
+  file:
+    path: "/home/pi/.motion"
+    recurse: yes
+    state: directory
+
+- name: 'Config script for motion'
+  become: yes
+  become_user: pi
+  template: src=motion.conf.j2 dest=/home/pi/.motion/motion.conf mode=0644
+  with_dict: "{{ motion }}"
+
+- name: 'Supervisor script for motion'
+  become: yes
+  template: src=supervisor_motion.conf.j2 dest=/etc/supervisor/conf.d/motion.conf mode=0644
+
+- name: 'Restart motion via supervisor'
+  supervisorctl: name=motion state=restarted
+  become: yes
+
+- name: 'Supervisor script for motion_sub'
+  become: yes
+  template: src=motion_sub.conf.j2 dest=/etc/supervisor/conf.d/motion_sub.conf mode=0644
+  with_dict: "{{ motion }}"
+
+- name: 'Restart motion_sub via supervisor'
+  supervisorctl: name=motion_sub state=restarted
+  become: yes
+

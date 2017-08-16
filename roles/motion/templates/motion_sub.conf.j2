@@ -1,10 +1,10 @@
-[program:camera_sub]
-command={{ webapps_dir }}/camera_sub.py
+[program:motion_sub]
+command={{ webapps_dir }}/motion_sub.py
     -e {{ aws_iot_endpoint }}
     -r {{ creds_location }}/rootCA.pem
     -c {{ creds_location }}/certificate.pem
     -k {{ creds_location }}/private.pem
-    -t {{ item.value.snapshot_topic }}
+    -t {{ item.value.motion_topic }}
 
 directory={{ webapps_dir }}
 autostart=true

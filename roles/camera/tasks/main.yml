@@ -9,13 +9,11 @@
 - name: 'Set camera state'
   include: camera.yml
 
-- name: 'Crontab entry for camera sub'
-  become: yes
-  cron: name="camera sub " minute="0" hour="*" job="/usr/bin/aws s3 mv /tmp/ s3://archive.snerted.com/ --recursive --exclude '*' --include '{{ snapshot_topic }}_*.png'"
-
-- name: 'Supervisor script for camera monitor'
+- name: 'Supervisor script for snapshots'
   become: yes
   template: src=camera_sub.conf.j2 dest=/etc/supervisor/conf.d/camera_sub.conf mode=0644
-  with_dict: "{{ videos }}"
-  notify:
-    - restart supervisord
+  with_dict: "{{ snapshots }}"
+
+- name: 'Restart camera_sub via supervisor'
+  supervisorctl: name=camera_sub state=restarted
+  become: yes

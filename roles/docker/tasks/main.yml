@@ -4,24 +4,11 @@
   action: apt pkg={{item}} state=installed
   with_items:
     - apt-transport-https
+    - ca-certificates
+    - software-properties-common
 
-- name: 'set apt repo for docker'
-  become: yes
-  template: src=docker.list.j2 dest=/etc/apt/sources.list.d/docker.list mode=0644
-
-- name: 'Add apt key for docker'
-  become: yes
-  apt_key: keyserver=hkp://p80.pool.sks-keyservers.net:80 id=58118E89F3A912897C070ADBF76221572C52609D
-
-- name: 'Update APT package cache'
-  become: yes
-  action: apt update_cache=yes
-
-- name: 'Install docker package'
-  become: yes
-  action: apt pkg={{item}} state=latest
-  with_items:
-    - docker-engine
+- name: 'Install docker from get.docker.com'
+  shell: "curl -sSL https://get.docker.com | sh"
 
 - name: 'Adding pi to docker group'
   become: yes

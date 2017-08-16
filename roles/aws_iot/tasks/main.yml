@@ -13,12 +13,6 @@
 - name: 'Install paho mqtt python package'
   pip: name=paho-mqtt executable=pip state=present
 
-- name: 'Install wiringpi python package'
-  pip: name=wiringpi executable=pip state=latest
-
-- name: 'Install Adafruit DHT python package'
-  pip: name=Adafruit_Python_DHT executable=pip state=latest
-
 - name: 'Install gpiozero python package'
   pip: name=gpiozero executable=pip state=latest
 

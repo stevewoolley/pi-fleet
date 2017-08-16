@@ -6,6 +6,22 @@
   become: yes
   become_user: "{{ user }}"
 
+# - name: 'Install Adafruit DHT python package'
+#  pip: name=Adafruit_Python_DHT executable=pip state=latest
+- name: 'Get source for Adafruit DHT'
+  git: repo=https://github.com/adafruit/Adafruit_Python_DHT.git
+      dest=/usr/src/Adafruit_Python_DHT
+      accept_hostkey=yes
+  become: yes
+
+- name: 'Build and install Adafruit DHT'
+  command: "{{ item }}"
+  args:
+    chdir: /usr/src/Adafruit_Python_DHT
+  with_items:
+    - python setup.py install
+  become: yes
+
 - name: 'Create dht_monitor script'
   template: src=dht_monitor.sh.j2 dest={{ user_dir }}/dht_monitor.sh mode=0755 owner={{ user }} group={{ group }}
 

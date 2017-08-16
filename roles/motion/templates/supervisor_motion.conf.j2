@@ -1,0 +1,6 @@
+[program:motion]
+command=motion -c /home/pi/.motion/motion.conf
+numprocs=1
+redirect_stderr=true
+stdout_logfile=/var/log/motion.log
+user=pi

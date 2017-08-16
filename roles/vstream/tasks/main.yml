@@ -1,4 +1,11 @@
 ---
+- name: 'Install libav packages'
+  become: yes
+  action: apt pkg={{item}} state=latest
+  with_items:
+    - libavcodec-extra
+    - libav-tools
+
 - name: 'Clone/Update latest repo'
   git: repo={{ github_repo }}
       dest={{ webapps_dir }}
@@ -9,42 +16,42 @@
 - name: 'ffmpeg download and unpack'
   become: yes
   unarchive:
-    src: https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-armhf-32bit-static.tar.xz
+    src: https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-{{ arm_arch }}-32bit-static.tar.xz
     dest: /opt
     remote_src: True
 
 - name: 'symlink ffmpeg'
   become: yes
   file:
-    src: /opt/ffmpeg-3.2.4-armhf-32bit-static/ffmpeg
+    src: /opt/ffmpeg-3.3-{{ arm_arch }}-32bit-static/ffmpeg
     dest: /usr/local/bin/ffmpeg
     state: link
 
 - name: 'symlink ffmpeg-10bit'
   become: yes
   file:
-    src: /opt/ffmpeg-3.2.4-armhf-32bit-static/ffmpeg-10bit
+    src: /opt/ffmpeg-3.3-{{ arm_arch }}-32bit-static/ffmpeg-10bit
     dest: /usr/local/bin/ffmpeg-10bit
     state: link
 
 - name: 'symlink ffprobe'
   become: yes
   file:
-    src: /opt/ffmpeg-3.2.4-armhf-32bit-static/ffprobe
+    src: /opt/ffmpeg-3.3-{{ arm_arch }}-32bit-static/ffprobe
     dest: /usr/local/bin/ffprobe
     state: link
 
 - name: 'symlink ffserver'
   become: yes
   file:
-    src: /opt/ffmpeg-3.2.4-armhf-32bit-static/ffserver
+    src: /opt/ffmpeg-3.3-{{ arm_arch }}-32bit-static/ffserver
     dest: /usr/local/bin/ffserver
     state: link
 
 - name: 'symlink qt-faststart'
   become: yes
   file:
-    src: /opt/ffmpeg-3.2.4-armhf-32bit-static/qt-faststart
+    src: /opt/ffmpeg-3.3-{{ arm_arch }}-32bit-static/qt-faststart
     dest: /usr/local/bin/qt-faststart
     state: link
 

@@ -1,0 +1,8 @@
+---
+- name: 'start supervisord'
+  become: yes
+  service: name=supervisor state=started
+
+- name: 'restart supervisord'
+  become: yes
+  service: name=supervisor state=restarted

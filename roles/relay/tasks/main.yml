@@ -1,16 +1,20 @@
 ---
+- name: 'Install wiringpi python package'
+  pip: name=wiringpi executable=pip state=latest
+
 - name: 'Clone/Update latest repo'
   git: repo={{ github_repo }}
       dest={{ webapps_dir }}
       accept_hostkey=yes
   become: yes
   become_user: "{{ user }}"
-  notify:
-    - restart supervisord
 
 - name: 'create relay supervisord confs'
   become: yes
   template: src=relay_sub.conf.j2 dest=/etc/supervisor/conf.d/relay_sub-{{ item.value.pin }}.conf mode=0644
   with_dict: "{{ relays }}"
-  notify:
-    - restart supervisord
+
+- name: 'Restart relay via supervisor'
+  supervisorctl: name=relay_sub-{{ item.value.pin }} state=restarted
+  become: yes
+  with_dict: "{{ relays }}"

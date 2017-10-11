@@ -1,0 +1,12 @@
+[program:s3_upload_server]
+command={{ webapps_dir }}/s3_upload_server.py
+    -b {{ item.value.workspace_bucket }}
+
+directory={{ webapps_dir }}
+user=pi
+autostart=true
+autorestart=true
+stdout_logfile={{ log_file }}
+stderr_logfile={{ log_file }}
+redirect_stderr=true
+exitcodes=0

@@ -171,7 +171,7 @@ switchfilter off
 
 # Threshold for number of changed pixels in an image that
 # triggers motion detection (default: 1500)
-threshold 1500
+threshold {{ item.value.motion_threshold }}
 
 # Automatically tune the threshold down if possible (default: off)
 threshold_tune off
@@ -222,10 +222,10 @@ minimum_motion_frames 2
 # Recommended range: 0 to 5 (default: 0)
 # Do not use large values! Large values will cause Motion to skip video frames and
 # cause unsmooth movies. To smooth movies use larger values of post_capture instead.
-pre_capture 1
+pre_capture {{ item.value.motion_pre_capture }}
 
 # Number of frames to capture after motion is no longer detected (default: 0)
-post_capture 0
+post_capture {{ item.value.motion_post_capture }}
 
 # Event Gap is the seconds of no motion detection that triggers the end of an event.
 # An event is defined as a series of motion images taken within a short timeframe.
@@ -233,7 +233,7 @@ post_capture 0
 # events causing all Motion to be written to one single movie file and no pre_capture.
 # If set to 0, motion is running in gapless mode. Movies don't have gaps anymore. An
 # event ends right after no more motion is detected and post_capture is over.
-event_gap 10
+event_gap 5
 
 # Maximum length in seconds of a movie
 # When value is exceeded a new movie file is created. (Default: 0 = infinite)
@@ -253,7 +253,7 @@ emulate_motion off
 # Picture with most motion of an event is saved when set to 'best'.
 # Picture with motion nearest center of picture is saved when set to 'center'.
 # Can be used as preview shot for the corresponding movie.
-output_pictures center
+output_pictures on
 
 # Output pictures with only the pixels moving object (ghost images) (default: off)
 output_debug_pictures off
@@ -291,7 +291,7 @@ ffmpeg_timelapse 0
 
 # The file rollover mode of the timelapse video
 # Valid values: hourly, daily (default), weekly-sunday, weekly-monday, monthly, manual
-ffmpeg_timelapse_mode daily
+ffmpeg_timelapse_mode hourly
 
 # Bitrate to be used by the ffmpeg encoder (default: 400000)
 # This option is ignored if ffmpeg_variable_bitrate is not 0 (disabled)
@@ -318,7 +318,7 @@ ffmpeg_variable_bitrate 0
 # mp4 - MPEG-4 Part 14 H264 encoding
 # mkv - Matroska H264 encoding
 # hevc - H.265 / HEVC (High Efficiency Video Coding)
-ffmpeg_video_codec mpeg4
+ffmpeg_video_codec mp4
 
 # True to duplicate frames to achieve "framerate" fps, but enough
 # duplicated frames and the video appears to freeze once a second.
@@ -626,7 +626,7 @@ on_event_end {{ webapps_dir }}/publisher.py -e {{ aws_iot_endpoint }} -r {{ cred
 
 # Command to be executed when a picture (.ppm|.jpg|.webp) is saved (default: none)
 # To give the filename as an argument to a command append it with %f
-on_picture_save {{ item.value.archive_script }} {{ item.value.s3_bucket }} %f --delete
+on_picture_save {{ item.value.archive_script }} -d %f
 
 # Command to be executed when a motion frame is detected (default: none)
 ; on_motion_detected value
@@ -641,7 +641,7 @@ on_picture_save {{ item.value.archive_script }} {{ item.value.s3_bucket }} %f --
 
 # Command to be executed when a movie file (.mpg|.avi) is closed. (default: none)
 # To give the filename as an argument to a command append it with %f
-; on_movie_end value
+; on_movie_end {{ item.value.archive_script }} {{ item.value.s3_bucket }} %f --delete
 
 # Command to be executed when a camera can't be opened or if it is lost
 # NOTE: There is situations when motion don't detect a lost camera!

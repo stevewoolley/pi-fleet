@@ -11,6 +11,9 @@
 - name: 'generate locale'
   locale_gen: name={{ raspi_config_locale }} state=present
 
+- name: 'set rc.local'
+  template: src=rc.local.j2 dest=/etc/rc.local
+
 - name: 'set locale'
   template: src=locale.j2 dest=/etc/default/locale
 

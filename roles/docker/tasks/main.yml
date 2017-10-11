@@ -8,6 +8,7 @@
     - software-properties-common
 
 - name: 'Install docker from get.docker.com'
+  become: yes
   shell: "curl -sSL https://get.docker.com | sh"
 
 - name: 'Adding pi to docker group'

@@ -5,11 +5,11 @@
       accept_hostkey=yes
   become: yes
   become_user: "{{ user }}"
-  notify:
-    - restart supervisord
 
 - name: 'create buzzer supervisord confs'
   template: src=buzzer_sub.conf.j2 dest=/etc/supervisor/conf.d/buzzer_sub.conf mode=0644
   become: yes
-  notify:
-    - restart supervisord
+
+- name: 'Restart buzzer via supervisor'
+  supervisorctl: name=buzzer_sub state=restarted
+  become: yes

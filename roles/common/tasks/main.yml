@@ -28,3 +28,9 @@
 
 - name: 'Amazon config setup'
   include: aws.yml
+
+# Disable ipv6
+- sysctl:
+    name: net.ipv6.conf.all.disable_ipv6
+    value: 1
+    sysctl_set: yes

@@ -7,6 +7,9 @@
     - python-picamera
     - python-yaml
 
+- name: 'Install requests python package'
+  pip: name=requests executable=pip state=latest
+
 - name: 'Install AWSIoTPythonSDK python package'
   pip: name=AWSIoTPythonSDK executable=pip state=latest
 

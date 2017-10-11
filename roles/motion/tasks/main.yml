@@ -9,16 +9,24 @@
     - pkgconf
     - libtool
     - libzip-dev
-    - libjpeg62
     - libjpeg62-turbo-dev
     - git
+    - gawk
     - libavformat-dev
     - libavcodec-dev
     - libavutil-dev
     - libswscale-dev
     - libavdevice-dev
+    - libav-tools
 
-- name: 'Clone/Update latest repo'
+- name: 'Clone/Update latest AWS-IoT repo'
+  git: repo={{ github_repo }}
+      dest={{ webapps_dir }}
+      accept_hostkey=yes
+  become: yes
+  become_user: "{{ user }}"
+
+- name: 'Clone/Update latest motion repo'
   git: repo=https://github.com/Motion-Project/motion.git
       dest=/usr/src/motion
       accept_hostkey=yes
@@ -48,12 +56,17 @@
   template: src=motion.conf.j2 dest=/home/pi/.motion/motion.conf mode=0644
   with_dict: "{{ motion }}"
 
+- name: 'archive script for motion'
+  become: yes
+  become_user: "{{ user }}"
+  template: src=archive.sh.j2 dest=/home/pi/archive.sh mode=0755
+
 - name: 'Supervisor script for motion'
   become: yes
   template: src=supervisor_motion.conf.j2 dest=/etc/supervisor/conf.d/motion.conf mode=0644
 
 - name: 'Restart motion via supervisor'
-  supervisorctl: name=motion state=restarted
+  supervisorctl: name=motion state=stopped
   become: yes
 
 - name: 'Supervisor script for motion_sub'
@@ -63,5 +76,14 @@
 
 - name: 'Restart motion_sub via supervisor'
   supervisorctl: name=motion_sub state=restarted
+  become: yes
+
+- name: 'Supervisor script for s3_upload_server'
+  become: yes
+  template: src=s3_upload_server.conf.j2 dest=/etc/supervisor/conf.d/s3_upload_server.conf mode=0644
+  with_dict: "{{ motion }}"
+
+- name: 'Restart s3_upload_server via supervisor'
+  supervisorctl: name=s3_upload_server state=restarted
   become: yes
 

@@ -1,0 +1,19 @@
+#!/bin/sh -e
+# {{ ansible_managed }}
+
+# Print the IP address
+_IP=$(hostname -I) || true
+if [ "$_IP" ]; then
+  printf "My IP address is %s\n" "$_IP"
+fi
+
+# turn off PWR and ACT LED
+echo none > /sys/class/leds/led0/trigger
+echo none > /sys/class/leds/led1/trigger
+echo 0 > /sys/class/leds/led0/brightness
+echo 0 > /sys/class/leds/led1/brightness
+
+# Turn off power to HDMI - HDMI not used in server mode
+/usr/bin/tvservice -o
+
+exit 0

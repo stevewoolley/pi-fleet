@@ -4,6 +4,7 @@ raspi_config_enable_camera: no
 raspi_config_locale: en_US.UTF-8
 raspi_config_timezone: America/New_York
 raspi_config_other_options: {
+  'disable_camera_led':1,
   'dtparam=act_led_trigger':'none',
   'dtparam=act_led_activelow':'off',
   'dtparam=pwr_led_trigger':'none',

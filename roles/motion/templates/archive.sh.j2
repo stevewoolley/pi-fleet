@@ -1,0 +1,10 @@
+#!/bin/bash
+if pidof -o %PPID -x "archive.sh">/dev/null; then
+  exit 1
+fi
+cd /tmp/motion
+FILENAME={{ inventory_hostname_short }}-$(date +%Y%m%d%H%M).mp4
+find -name '{{ inventory_hostname_short }}-*.jpg' ! -name '*-snapshot.jpg' | sort | head -120 | gawk '{ printf "mv %s %04d.jpg\n", $0, NR }' | bash
+nice -n 10 avconv -framerate 2  -i %04d.jpg -c:v libx264 $FILENAME
+find . -type f -name '????.jpg' -delete
+aws s3 mv $FILENAME s3://archive.snerted.com/$FILENAME

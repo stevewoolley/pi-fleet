@@ -12,5 +12,6 @@
   with_dict: "{{ leds }}"
 
 - name: 'Restart led_sub via supervisor'
-  supervisorctl: name=led_sub state=restarted
+  supervisorctl: name=led_sub-{{ item.value.pin }} state=restarted
   become: yes
+  with_dict: "{{ leds }}"

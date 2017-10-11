@@ -6,9 +6,12 @@
   become: yes
   become_user: "{{ user }}"
 
-- name: 'create sensor supervisord confs'
+- name: 'Supervisor script for pir_pub'
   template: src=pir_pub.conf.j2 dest=/etc/supervisor/conf.d/pir_pub-{{ item.value.pin }}.conf mode=0644
   with_dict: "{{ pirs }}"
   become: yes
-  notify:
-    - restart supervisord
+
+- name: 'Restart pir_pub via supervisor'
+  supervisorctl: name=pir_pub-{{ item.value.pin }} state=restarted
+  become: yes
+  with_dict: "{{ pirs }}"

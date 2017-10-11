@@ -6,9 +6,12 @@
   become: yes
   become_user: "{{ user }}"
 
-- name: 'create sensor supervisord confs'
+- name: 'create sensor_pub supervisord confs'
   become: yes
   template: src=sensor_pub.conf.j2 dest=/etc/supervisor/conf.d/sensor_pub-{{ item.value.pin }}.conf mode=0644
   with_dict: "{{ sensors }}"
-  notify:
-    - restart supervisord
+
+- name: 'Restart sensor_pub via supervisor'
+  supervisorctl: name=sensor_pub-{{ item.value.pin }} state=restarted
+  become: yes
+  with_dict: "{{ sensors }}"

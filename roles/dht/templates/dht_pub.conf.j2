@@ -1,0 +1,18 @@
+[program:dht_pub-{{ item.value.pin }}]
+command={{ webapps_dir }}/dht_pub.py
+    -e {{ aws_iot_endpoint }}
+    -r {{ creds_location }}/root.ca.pem
+    -c {{ creds_location }}/{{ iot_cert }}-certificate.pem.crt
+    -k {{ creds_location }}/{{ iot_cert }}-private.pem.key
+    -t {{ item.value.topic }}
+    -p {{ item.value.pin }}
+{% if item.value.dht_type is defined %}
+    -y {{ item.value.dht_type }}
+{% endif %}
+directory={{ webapps_dir }}
+autostart=true
+autorestart=true
+stdout_logfile={{ log_file }}
+stderr_logfile={{ log_file }}
+redirect_stderr=true
+exitcodes=0

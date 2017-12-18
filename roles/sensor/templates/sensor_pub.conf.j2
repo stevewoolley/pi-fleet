@@ -13,6 +13,15 @@ command={{ webapps_dir }}/sensor_pub.py
 {% if item.value.low_value is defined %}
     -z {{ item.value.low_value }}
 {% endif %}
+{% if item.value.high_alert is defined %}
+    -a {{ item.value.high_alert }}
+{% endif %}
+{% if item.value.low_alert is defined %}
+    -b {{ item.value.low_alert }}
+{% endif %}
+{% if item.value.cushion is defined %}
+    -w {{ item.value.cushion }}
+{% endif %}
 directory={{ webapps_dir }}
 autostart=true
 autorestart=true

@@ -8,17 +8,27 @@
 - name: 'Set Pi Hostname'
   include: hosts.yml
 
-- name: 'generate locale'
-  locale_gen: name={{ raspi_config_locale }} state=present
-
-- name: 'set rc.local'
+- name: 'Set rc.local'
   template: src=rc.local.j2 dest=/etc/rc.local
 
-- name: 'set locale'
-  template: src=locale.j2 dest=/etc/default/locale
+- name: 'Set keyboard'
+  replace:
+    destfile: /etc/default/keyboard
+    regexp: '"gb"'
+    replace: '"us"'
+  ignore_errors: yes
 
-- name: 'set local timezone'
-  timezone: name={{ raspi_config_timezone }}
+- name: 'Set timezone to America/New_York'
+  timezone:
+    name: America/New_York
+
+- name: 'Install US locale'
+  locale_gen:
+    name: en_US.UTF-8
+    state: present
+
+- name: 'Set locale'
+  command: 'update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8'
 
 - name: 'Set additional config vars'
   pi_boot_config:

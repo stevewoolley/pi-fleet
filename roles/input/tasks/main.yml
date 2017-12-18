@@ -1,0 +1,23 @@
+---
+- name: 'Set hostname facts'
+  set_fact:
+    full_hostname="{{ inventory_hostname }}"
+    short_hostname="{{ inventory_hostname.split('.', 1)[0] }}"
+
+- name: 'Clone/Update latest repo'
+  git:
+    repo: https://github.com/stevewoolley/iot.git
+    dest: iot
+    accept_hostkey: yes
+  become: yes
+  become_user: "{{ user }}"
+
+- name: 'create input_pub supervisord confs'
+  become: yes
+  template: src=input_pub.conf.j2 dest=/etc/supervisor/conf.d/input_pub-{{ item.value.pin }}.conf mode=0644
+  with_dict: "{{ inputs }}"
+
+- name: 'Restart input_pub via supervisor'
+  supervisorctl: name=input_pub-{{ item.value.pin }} state=restarted
+  become: yes
+  with_dict: "{{ inputs }}"

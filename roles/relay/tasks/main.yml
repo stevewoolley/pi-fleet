@@ -1,6 +1,8 @@
 ---
-- name: 'Install wiringpi python package'
-  pip: name=wiringpi executable=pip state=latest
+- name: 'Set hostname facts'
+  set_fact:
+    full_hostname="{{ inventory_hostname }}"
+    short_hostname="{{ inventory_hostname.split('.', 1)[0] }}"
 
 - name: 'Clone/Update latest repo'
   git: repo={{ github_repo }}

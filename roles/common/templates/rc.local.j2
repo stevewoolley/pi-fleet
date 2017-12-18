@@ -16,4 +16,7 @@ echo 0 > /sys/class/leds/led1/brightness
 # Turn off power to HDMI - HDMI not used in server mode
 /usr/bin/tvservice -o
 
+#
+{{ webapps_dir }}/static_host_pub.py -e a2j2tqmxrervzk.iot.us-east-1.amazonaws.com -r {{ webapps_dir }}/root.ca.pem -c {{ webapps_dir }}/{{ iot_cert }}-certificate.pem.crt -k {{ webapps_dir }}/{{ iot_cert }}-private.pem.key -n {{ short_hostname }}
+
 exit 0

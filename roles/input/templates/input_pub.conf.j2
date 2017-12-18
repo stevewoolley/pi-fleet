@@ -1,0 +1,26 @@
+[program:input_pub-{{ item.value.pin }}]
+command={{ webapps_dir }}/input_pub.py
+    -e {{ aws_iot_endpoint }}
+    -r {{ creds_location }}/root.ca.pem
+    -c {{ creds_location }}/{{ iot_cert }}-certificate.pem.crt
+    -k {{ creds_location }}/{{ iot_cert }}-private.pem.key
+    -t {{ item.value.topic }}
+    -p {{ item.value.pin }}
+    -s {{ item.value.name }}
+    -n {{ short_hostname }}
+{% if item.value.high_value is defined %}
+    -y {{ item.value.high_value }}
+{% endif %}
+{% if item.value.low_value is defined %}
+    -z {{ item.value.low_value }}
+{% endif %}
+{% if item.value.low_topic is defined %}
+    -o {{ item.value.low_topic }}
+{% endif %}
+directory={{ webapps_dir }}
+autostart=true
+autorestart=true
+stdout_logfile={{ log_file }}
+stderr_logfile={{ log_file }}
+redirect_stderr=true
+exitcodes=0

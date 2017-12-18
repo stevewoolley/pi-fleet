@@ -1,6 +1,0 @@
-#!/bin/bash
-
-cd /home/pi/AWS-IoT
-if [ -f "/home/pi/AWS-IoT/pi-monitor.py" ]; then
-  ./pi-monitor.py -e {{ aws_iot_endpoint }} -o "sensors/{{ inventory_hostname }}" -t "\$aws/things/{{ inventory_hostname }}/shadow/update"
-fi

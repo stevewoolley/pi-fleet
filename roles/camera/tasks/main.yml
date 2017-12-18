@@ -1,19 +1,21 @@
 ---
 - name: 'Clone/Update latest repo'
-  git: repo={{ github_repo }}
-      dest={{ webapps_dir }}
-      accept_hostkey=yes
+  git:
+    repo: "{{ github_repo }}"
+    dest: "{{ webapps_dir }}"
+    accept_hostkey: yes
   become: yes
   become_user: "{{ user }}"
 
 - name: 'Set camera state'
   include: camera.yml
 
-- name: 'Supervisor script for snapshots'
+- name: 'create camera_sub supervisord confs'
   become: yes
   template: src=camera_sub.conf.j2 dest=/etc/supervisor/conf.d/camera_sub.conf mode=0644
-  with_dict: "{{ snapshots }}"
+  with_dict: "{{ cameras }}"
 
 - name: 'Restart camera_sub via supervisor'
   supervisorctl: name=camera_sub state=restarted
   become: yes
+  with_dict: "{{ cameras }}"

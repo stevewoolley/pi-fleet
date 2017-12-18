@@ -66,7 +66,7 @@
   template: src=supervisor_motion.conf.j2 dest=/etc/supervisor/conf.d/motion.conf mode=0644
 
 - name: 'Restart motion via supervisor'
-  supervisorctl: name=motion state=stopped
+  supervisorctl: name=motion state=restarted
   become: yes
 
 - name: 'Supervisor script for motion_sub'
@@ -74,14 +74,14 @@
   template: src=motion_sub.conf.j2 dest=/etc/supervisor/conf.d/motion_sub.conf mode=0644
   with_dict: "{{ motion }}"
 
-- name: 'Restart motion_sub via supervisor'
-  supervisorctl: name=motion_sub state=restarted
-  become: yes
-
 - name: 'Supervisor script for s3_upload_server'
   become: yes
   template: src=s3_upload_server.conf.j2 dest=/etc/supervisor/conf.d/s3_upload_server.conf mode=0644
   with_dict: "{{ motion }}"
+
+- name: 'Restart motion_sub via supervisor'
+  supervisorctl: name=motion_sub state=restarted
+  become: yes
 
 - name: 'Restart s3_upload_server via supervisor'
   supervisorctl: name=s3_upload_server state=restarted

@@ -1,12 +1,27 @@
 [program:pir_pub-{{ item.value.pin }}]
 command={{ webapps_dir }}/pir_pub.py
     -e {{ aws_iot_endpoint }}
-    -r {{ creds_location }}/rootCA.pem
-    -c {{ creds_location }}/certificate.pem
-    -k {{ creds_location }}/private.pem
+    -r {{ creds_location }}/root.ca.pem
+    -c {{ creds_location }}/{{ iot_cert }}-certificate.pem.crt
+    -k {{ creds_location }}/{{ iot_cert }}-private.pem.key
     -t {{ item.value.topic }}
-    -s {{ item.value.name }}
+    -s {{ item.value.source }}
     -p {{ item.value.pin }}
+{% if item.value.low_topic is defined %}
+    -o {{ item.value.low_topic }}
+{% endif %}
+{% if item.value.high_value is defined %}
+    -y {{ item.value.high_value }}
+{% endif %}
+{% if item.value.low_value is defined %}
+    -z {{ item.value.low_value }}
+{% endif %}
+{% if item.value.sample_rate is defined %}
+    -w {{ item.value.sample_rate }}
+{% endif %}
+{% if item.value.threshold is defined %}
+    -x {{ item.value.threshold }}
+{% endif %}
 directory={{ webapps_dir }}
 autostart=true
 autorestart=true

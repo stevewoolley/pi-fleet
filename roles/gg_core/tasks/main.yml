@@ -1,0 +1,91 @@
+---
+- name: 'Get nodejs 6.x repo info'
+  shell: curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+
+- name: 'Install greengrass core required packages'
+  action: apt pkg={{item}} state=latest
+  with_items:
+    - oracle-java8-jdk
+    - sqlite3
+    - nodejs
+
+- name: 'Create sym link for java8'
+  file:
+    src: /usr/bin/java
+    dest: /usr/bin/java8
+    state: link
+
+- name: 'Create sym link for nodejs v6.10'
+  file:
+    src: /usr/bin/nodejs
+    dest: /usr/bin/nodejs6.10
+    state: link
+
+- group:
+    name: ggc_group
+    system: yes
+    state: present
+
+- user:
+    name: ggc_user
+    group: ggc_group
+    system: yes
+    state: present
+
+- name: 'Set sysctl option fs.protected_hardlinks'
+  lineinfile:
+    path: /etc/sysctl.d/98-rpi.conf
+    line: fs.protected_hardlinks = 1
+
+- name: 'Set sysctl option fs.protected_symlinks'
+  lineinfile:
+    path: /etc/sysctl.d/98-rpi.conf
+    line: fs.protected_symlinks = 1
+
+- name: 'Add cgroup_memory to /boot/cmdline.txt'
+  replace:
+    path: /boot/cmdline.txt
+    regexp: 'rootfstype=ext4'
+    replace: 'rootfstype=ext4 cgroup_memory=1'
+
+- name: 'Clone/Update latest aws-greengrass-samples repo'
+  git:
+    repo: https://github.com/aws-samples/aws-greengrass-samples.git
+    dest: /home/pi/aws-greengrass-samples
+    accept_hostkey: yes
+  become: yes
+  become_user: "pi"
+
+- name: 'Add greengrass init.d daemon script'
+  action: template src=greengrass.j2 dest=/etc/init.d/greengrass mode=0755
+
+- name: 'Copy greengrass executables'
+  copy:
+    src: greengrass-linux-armv7l-1.3.0.tar.gz
+    dest: /home/pi
+    owner: pi
+    group: pi
+    mode: 0644
+
+- name: 'Copy certs'
+  copy:
+    src: "{{ certs_dir }}/{{ gg_guid }}-setup.tar.gz"
+    dest: /home/pi
+    owner: pi
+    group: pi
+    mode: 0644
+
+- name: 'Unpack greengrass platform'
+  shell: sudo tar -xzf greengrass-linux-armv7l-1.3.0.tar.gz -C /
+
+- name: 'Unpack certs'
+  shell: sudo tar -xzf {{ gg_guid }}-setup.tar.gz -C /greengrass
+
+- name: 'Get Symantec Verisign Root CA'
+  shell: curl http://www.symantec.com/content/en/us/enterprise/verisign/roots/VeriSign-Class%203-Public-Primary-Certification-Authority-G5.pem > root.ca.pem
+
+- name: 'Move Symantec Verisign Root CA to greengrass certs folder'
+  command: mv root.ca.pem /greengrass/certs/
+
+- name: 'Ensure greengrass daemon is started'
+  action: service name=greengrass state=started enabled=yes

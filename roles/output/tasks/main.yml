@@ -1,0 +1,23 @@
+---
+- name: 'Set hostname facts'
+  set_fact:
+    full_hostname="{{ inventory_hostname }}"
+    short_hostname="{{ inventory_hostname.split('.', 1)[0] }}"
+
+- name: 'Clone/Update latest repo'
+  git:
+    repo: https://github.com/stevewoolley/iot.git
+    dest: iot
+    accept_hostkey: yes
+  become: yes
+  become_user: "{{ user }}"
+
+- name: 'create output_sub supervisord confs'
+  become: yes
+  template: src=output_sub.conf.j2 dest=/etc/supervisor/conf.d/output_sub-{{ item.value.pin }}.conf mode=0644
+  with_dict: "{{ outputs }}"
+
+- name: 'Restart output_sub via supervisor'
+  supervisorctl: name=output_sub-{{ item.value.pin }} state=restarted
+  become: yes
+  with_dict: "{{ outputs }}"

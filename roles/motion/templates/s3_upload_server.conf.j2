@@ -1,6 +1,7 @@
 [program:s3_upload_server]
 command={{ webapps_dir }}/s3_upload_server.py
     -b {{ item.value.workspace_bucket }}
+    -x
 
 directory={{ webapps_dir }}
 user=pi

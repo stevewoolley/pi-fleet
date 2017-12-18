@@ -1,6 +1,0 @@
-#!/bin/bash
-
-cd {{ webapps_dir }}
-if [ -f "{{ webapps_dir }}/dht_monitor.py" ]; then
-  ./dht_monitor.py -e {{ aws_iot_endpoint }} -r {{ webapps_dir }}/rootCA.pem -c {{ webapps_dir }}/certificate.pem -k {{ webapps_dir }}/private.pem -y {{ dht_type }} -p {{ dht_pin }}
-fi

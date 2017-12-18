@@ -1,11 +1,23 @@
 [program:relay_sub-{{ item.value.pin }}]
 command={{ webapps_dir }}/relay_sub.py
     -e {{ aws_iot_endpoint }}
-    -r {{ creds_location }}/rootCA.pem
-    -c {{ creds_location }}/certificate.pem
-    -k {{ creds_location }}/private.pem
+    -r {{ creds_location }}/root.ca.pem
+    -c {{ creds_location }}/{{ iot_cert }}-certificate.pem.crt
+    -k {{ creds_location }}/{{ iot_cert }}-private.pem.key
     -t {{ item.value.topic }}
     -p {{ item.value.pin }}
+{% if item.value.pulse_delay is defined %}
+    -d {{ item.value.pulse_delay }}
+{% endif %}
+{% if item.value.active_high is defined %}
+    -a {{ item.value.active_high }}
+{% endif %}
+{% if item.value.initial_value is defined %}
+    -i {{ item.value.initial_value }}
+{% endif %}
+{% if item.value.default is defined %}
+    -z {{ item.value.default }}
+{% endif %}
 directory={{ webapps_dir }}
 autostart=true
 autorestart=true

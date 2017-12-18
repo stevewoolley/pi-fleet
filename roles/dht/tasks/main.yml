@@ -1,17 +1,23 @@
 ---
+- name: 'Set hostname facts'
+  set_fact:
+    full_hostname="{{ inventory_hostname }}"
+    short_hostname="{{ inventory_hostname.split('.', 1)[0] }}"
+
 - name: 'Clone/Update latest repo'
-  git: repo={{ github_repo }}
-      dest={{ webapps_dir }}
-      accept_hostkey=yes
+  git:
+    repo: "{{ github_repo }}"
+    dest: "{{ webapps_dir }}"
+    accept_hostkey: yes
   become: yes
   become_user: "{{ user }}"
 
 # - name: 'Install Adafruit DHT python package'
-#  pip: name=Adafruit_Python_DHT executable=pip state=latest
 - name: 'Get source for Adafruit DHT'
-  git: repo=https://github.com/adafruit/Adafruit_Python_DHT.git
-      dest=/usr/src/Adafruit_Python_DHT
-      accept_hostkey=yes
+  git:
+    repo: https://github.com/adafruit/Adafruit_Python_DHT.git
+    dest: /usr/src/Adafruit_Python_DHT
+    accept_hostkey: yes
   become: yes
 
 - name: 'Build and install Adafruit DHT'
@@ -22,9 +28,10 @@
     - python setup.py install
   become: yes
 
-- name: 'Create dht_monitor script'
-  template: src=dht_monitor.sh.j2 dest={{ user_dir }}/dht_monitor.sh mode=0755 owner={{ user }} group={{ group }}
-
 - name: 'Crontab entry for dht monitor'
+  cron:
+    name: "dht {{ item.value.pin }} hourly"
+    special_time: hourly
+    job: "{{ webapps_dir }}/dht_pub.py -e a2j2tqmxrervzk.iot.us-east-1.amazonaws.com -r {{ webapps_dir }}/root.ca.pem -c {{ webapps_dir }}/{{ iot_cert }}-certificate.pem.crt -k {{ webapps_dir }}/{{ iot_cert }}-private.pem.key -n {{ short_hostname }} -p {{ item.value.pin }} -t {{ item.value.topic }} -y {{ item.value.dht_type }}"
   become: yes
-  cron: name="dht monitor" minute="*/30" job="{{ user_dir }}/dht_monitor.sh"
+  with_dict: "{{ dhts }}"

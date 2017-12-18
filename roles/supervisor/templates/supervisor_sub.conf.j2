@@ -1,0 +1,14 @@
+[program:supervisor_sub]
+command={{ webapps_dir }}/supervisor_sub.py
+    -e {{ aws_iot_endpoint }}
+    -r {{ creds_location }}/rootCA.pem
+    -c {{ creds_location }}/certificate.pem
+    -k {{ creds_location }}/private.pem
+    -t {{ supervisor_topic }}
+directory={{ webapps_dir }}
+autostart=true
+autorestart=true
+stdout_logfile={{ log_file }}
+stderr_logfile={{ log_file }}
+redirect_stderr=true
+exitcodes=0

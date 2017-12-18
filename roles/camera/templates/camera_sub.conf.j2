@@ -1,10 +1,28 @@
 [program:camera_sub]
 command={{ webapps_dir }}/camera_sub.py
     -e {{ aws_iot_endpoint }}
-    -r {{ creds_location }}/rootCA.pem
-    -c {{ creds_location }}/certificate.pem
-    -k {{ creds_location }}/private.pem
-    -t {{ item.value.snapshot_topic }}
+    -r {{ creds_location }}/root.ca.pem
+    -c {{ creds_location }}/{{ iot_cert }}-certificate.pem.crt
+    -k {{ creds_location }}/{{ iot_cert }}-private.pem.key
+    -t {{ item.value.topic }}
+{% if item.value.rotation is defined %}
+    -z {{ item.value.rotation }}
+{% endif %}
+{% if item.value.width is defined %}
+    -x {{ item.value.width }}
+{% endif %}
+{% if item.value.height is defined %}
+    -y {{ item.value.height }}
+{% endif %}
+{% if item.value.source is defined %}
+    -s {{ item.value.source }}
+{% endif %}
+{% if item.value.bucket is defined %}
+    -b {{ item.value.bucket }}
+{% endif %}
+{% if item.value.web_bucket is defined %}
+    -w {{ item.value.web_bucket }}
+{% endif %}
 
 directory={{ webapps_dir }}
 autostart=true

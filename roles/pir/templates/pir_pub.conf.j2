@@ -19,6 +19,9 @@ command={{ webapps_dir }}/pir_pub.py
 {% if item.value.sample_rate is defined %}
     -w {{ item.value.sample_rate }}
 {% endif %}
+{% if item.value.queue_len is defined %}
+    -q {{ item.value.queue_len }}
+{% endif %}
 {% if item.value.threshold is defined %}
     -x {{ item.value.threshold }}
 {% endif %}

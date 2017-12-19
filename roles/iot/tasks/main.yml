@@ -22,6 +22,9 @@
 - name: 'Install gpiozero python package'
   pip: name=gpiozero executable=pip state=latest
 
+- name: 'Install picamera python package'
+  pip: name=picamera executable=pip state=latest
+
 - name: 'Clone/Update latest repo'
   git:
     repo: https://github.com/stevewoolley/iot.git

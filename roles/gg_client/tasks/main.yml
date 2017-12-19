@@ -1,0 +1,25 @@
+---
+- name: 'Clone/Update latest iot repo'
+  git:
+    repo: https://github.com/stevewoolley/iot.git
+    dest: "{{ user_dir }}/iot"
+    accept_hostkey: yes
+  become: yes
+  become_user: "{{ user }}"
+
+- name: 'Copy certs'
+  copy:
+    src: "{{ certs_dir }}/{{ gg_guid }}-setup.tar.gz"
+    dest: "{{ user_dir }}"
+    owner: "{{ user }}"
+    group: "{{ group }}"
+    mode: 0644
+
+- name: 'Unpack certs'
+  shell: sudo tar -xzf {{ gg_guid }}-setup.tar.gz -C {{ user_dir }}/iot
+
+- name: 'Get Symantec Verisign Root CA'
+  shell: curl http://www.symantec.com/content/en/us/enterprise/verisign/roots/VeriSign-Class%203-Public-Primary-Certification-Authority-G5.pem > root.ca.pem
+
+- name: 'Move Symantec Verisign Root CA to greengrass certs folder'
+  command: mv root.ca.pem {{ user_dir }}/iot

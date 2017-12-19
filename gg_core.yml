@@ -1,0 +1,6 @@
+---
+- hosts: site
+  sudo: yes
+  roles:
+    - common
+    - gg_core

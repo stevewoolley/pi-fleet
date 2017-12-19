@@ -11,6 +11,12 @@ command={{ webapps_dir }}/input_pub.py
 {% if item.value.high_value is defined %}
     -y {{ item.value.high_value }}
 {% endif %}
+{% if item.value.bounce_time is defined %}
+    -b {{ item.value.bounce_time }}
+{% endif %}
+{% if item.value.pull_up is defined %}
+    -u {{ item.value.pull_up }}
+{% endif %}
 {% if item.value.low_value is defined %}
     -z {{ item.value.low_value }}
 {% endif %}

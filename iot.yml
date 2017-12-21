@@ -1,6 +1,7 @@
 ---
-- hosts: site
-  sudo: yes
+- hosts:
+    - home
+    - office
   roles:
     - common
     - iot

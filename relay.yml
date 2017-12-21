@@ -1,4 +1,6 @@
 ---
-- hosts: site
+- hosts:
+    - home-relay
+    - office-relay
   roles:
     - relay

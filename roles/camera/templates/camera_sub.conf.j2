@@ -17,11 +17,14 @@ command={{ webapps_dir }}/camera_sub.py
 {% if item.value.source is defined %}
     -s {{ item.value.source }}
 {% endif %}
-{% if item.value.bucket is defined %}
-    -b {{ item.value.bucket }}
+{% if item.value.workspace_bucket is defined %}
+    -j {{ item.value.workspace_bucket }}
 {% endif %}
 {% if item.value.web_bucket is defined %}
     -w {{ item.value.web_bucket }}
+{% endif %}
+{% if item.value.archive_bucket is defined %}
+    -a {{ item.value.archive_bucket }}
 {% endif %}
 
 directory={{ webapps_dir }}

@@ -1,27 +1,6 @@
 ---
 - name: 'apply raspi-config'
   command: raspi-config --apply-os-config
-  become: true
-
-- name: 'Restart rsyslog'
-  service: name=rsyslog state=restarted
-  become: true
 
 - name: 'Restart dhcpcd'
   service: name=dhcpcd state=restarted
-  become: true
-
-- name: 'reboot'
-  command: shutdown -r now
-  async: 0
-  poll: 0
-  ignore_errors: True
-  become: true
-  notify:
-    - wait for reboot
-
-- name: 'wait for reboot'
-  local_action: wait_for host={{ inventory_hostname }}
-                state=started
-                timeout=30
-  sudo: false

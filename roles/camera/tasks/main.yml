@@ -1,4 +1,9 @@
 ---
+- name: 'Install common packages'
+  action: apt pkg={{item}} state=latest
+  with_items:
+    - gpac
+
 - name: 'Clone/Update latest repo'
   git:
     repo: "{{ github_repo }}"

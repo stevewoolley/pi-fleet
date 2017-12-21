@@ -1,4 +1,6 @@
 ---
-- hosts: site
+- hosts:
+    - home-dht
+    - office-dht
   roles:
     - dht

@@ -52,7 +52,6 @@
 
 - name: 'Configure logrotate'
   template: src=iot_logrotate.j2 dest=/etc/logrotate.d/iot owner={{ user }} group={{ group }} mode=0644
-  become: yes
   notify:
     - logrotate-apply
 

@@ -1,6 +1,0 @@
----
-- hosts: site
-  sudo: yes
-  roles:
-    - common
-    - aws_iot

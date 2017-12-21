@@ -6,7 +6,7 @@
   template: src=interfaces.j2 dest=/etc/network/interfaces mode=0644
 
 - name: 'Set Pi Hostname'
-  include: hosts.yml
+  import_tasks: hosts.yml
 
 - name: 'Set rc.local'
   template: src=rc.local.j2 dest=/etc/rc.local
@@ -37,5 +37,5 @@
   notify:
     - apply raspi-config
 
-- name: 'change user password'
+- name: 'Change user password'
   user: name={{ user }} update_password=always password={{ pi_user_password }}

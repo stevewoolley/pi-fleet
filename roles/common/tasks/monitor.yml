@@ -1,3 +1,0 @@
----
-- name: 'Install scripts to turn on/off display'
-  template: src=rpi_monitor.sh.j2 dest=/usr/local/sbin/rpi_monitor.sh mode=0755

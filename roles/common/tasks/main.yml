@@ -1,20 +1,20 @@
 ---
 - name: 'Configure system'
-  include: config.yml
-  tags:
-    - bootstrap
+  import_tasks: config.yml
 
-# Disable ipv6
-- sysctl:
+- name: 'Disable ipv6'
+  sysctl:
     name: net.ipv6.conf.all.disable_ipv6
     value: 1
     sysctl_set: yes
 
 - name: 'Update package cache'
-  apt: update_cache=yes
+  apt:
+    update_cache: yes
 
 - name: 'Upgrade system to the latest packages'
-  apt: upgrade=safe
+  apt:
+    upgrade: safe
 
 - name: 'Install common packages'
   action: apt pkg={{item}} state=latest
@@ -28,10 +28,7 @@
     - build-essential
 
 - name: 'Install python and python libs'
-  include: python.yml
-
-# - name: 'Fix rsyslog'
-#   include: rsyslog.yml
+  import_tasks: python.yml
 
 - name: 'Amazon config setup'
-  include: aws.yml
+  import_tasks: aws.yml

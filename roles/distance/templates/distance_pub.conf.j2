@@ -1,0 +1,16 @@
+[program:distance_sub-{{ item.value.trigger_pin }}-{{ item.value.echo_pin }}]
+command={{ webapps_dir }}/distance_sub.py
+    -e {{ aws_iot_endpoint }}
+    -r {{ creds_location }}/root.ca.pem
+    -c {{ creds_location }}/{{ iot_cert }}-certificate.pem.crt
+    -k {{ creds_location }}/{{ iot_cert }}-private.pem.key
+    -t {{ item.value.topic }}
+    --trigger_pin {{ item.value.trigger_pin }}
+    --echo_pin {{ item.value.echo_pin }}
+directory={{ webapps_dir }}
+autostart=true
+autorestart=true
+stdout_logfile={{ log_file }}
+stderr_logfile={{ log_file }}
+redirect_stderr=true
+exitcodes=0

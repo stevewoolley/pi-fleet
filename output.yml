@@ -1,7 +1,6 @@
 ---
 - hosts:
     - home-output
-    - office-ouput
-  sudo: yes
+    - office-output
   roles:
     - output

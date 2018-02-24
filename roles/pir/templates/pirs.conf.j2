@@ -1,0 +1,3 @@
+[group:pirs]
+programs= {% for key, value in pirs.iteritems() %}pir_pub-{{ value.pin }} {% endfor %}
+

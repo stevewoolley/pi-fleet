@@ -2,6 +2,5 @@
 - hosts:
     - home-input
     - office-input
-  sudo: yes
   roles:
     - input

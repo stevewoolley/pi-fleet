@@ -1,15 +1,23 @@
 ---
 - name: 'Configure WIFI'
-  template: src=wpa_supplicant.conf.j2 dest=/etc/wpa_supplicant/wpa_supplicant.conf mode=0600
+  template:
+    src: wpa_supplicant.conf.j2
+    dest: /etc/wpa_supplicant/wpa_supplicant.conf
+    mode: 0600
 
 - name: 'Disable Wifi Power Management'
-  template: src=interfaces.j2 dest=/etc/network/interfaces mode=0644
+  template:
+    src: interfaces.j2
+    dest: /etc/network/interfaces
+    mode: 0644
 
 - name: 'Set Pi Hostname'
   import_tasks: hosts.yml
 
 - name: 'Set rc.local'
-  template: src=rc.local.j2 dest=/etc/rc.local
+  template:
+    src: rc.local.j2
+    dest: /etc/rc.local
 
 - name: 'Set keyboard'
   replace:
@@ -38,4 +46,13 @@
     - apply raspi-config
 
 - name: 'Change user password'
-  user: name={{ user }} update_password=always password={{ pi_user_password }}
+  user:
+    name: "{{ user }}"
+    update_password: always
+    password: "{{ pi_user_password }}"
+
+- name: 'Add group gpio to user'
+  user:
+    name: "{{ user }}"
+    groups: gpio
+    append: yes

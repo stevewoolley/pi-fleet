@@ -7,7 +7,6 @@ command={{ webapps_dir }}/input_pub.py
     -t {{ item.value.topic }}
     -p {{ item.value.pin }}
     -s {{ item.value.name }}
-    -n {{ short_hostname }}
 {% if item.value.high_value is defined %}
     -y {{ item.value.high_value }}
 {% endif %}

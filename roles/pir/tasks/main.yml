@@ -1,17 +1,29 @@
 ---
 - name: 'Clone/Update latest repo'
-  git: repo={{ github_repo }}
-      dest={{ webapps_dir }}
-      accept_hostkey=yes
+  git:
+    repo: https://github.com/stevewoolley/iot.git
+    dest: iot
+    accept_hostkey: yes
   become: yes
   become_user: "{{ user }}"
 
 - name: 'Supervisor script for pir_pub'
-  template: src=pir_pub.conf.j2 dest=/etc/supervisor/conf.d/pir_pub-{{ item.value.pin }}.conf mode=0644
+  template:
+    src: pir_pub.conf.j2
+    dest: "/etc/supervisor/conf.d/pir_pub-{{ item.value.pin }}.conf"
+    mode: 0644
   with_dict: "{{ pirs }}"
   become: yes
 
-- name: 'Restart pir_pub via supervisor'
-  supervisorctl: name=pir_pub-{{ item.value.pin }} state=restarted
+- name: 'Supervisor script for pirs'
+  template:
+    src: pirs.conf.j2
+    dest: "/etc/supervisor/conf.d/pirs.conf"
+    mode: 0644
   become: yes
-  with_dict: "{{ pirs }}"
+
+- name: 'Restart pirs via supervisor'
+  supervisorctl:
+    name: "pirs:"
+    state: restarted
+  become: yes

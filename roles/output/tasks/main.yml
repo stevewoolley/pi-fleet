@@ -14,10 +14,15 @@
 
 - name: 'create output_sub supervisord confs'
   become: yes
-  template: src=output_sub.conf.j2 dest=/etc/supervisor/conf.d/output_sub-{{ item.value.pin }}.conf mode=0644
+  template:
+    src: output_sub.conf.j2
+    dest: "/etc/supervisor/conf.d/output_sub-{{ item.value.pin }}.conf"
+    mode: 0644
   with_dict: "{{ outputs }}"
 
 - name: 'Restart output_sub via supervisor'
-  supervisorctl: name=output_sub-{{ item.value.pin }} state=restarted
+  supervisorctl:
+    name: "output_sub-{{ item.value.pin }}"
+    state: restarted
   become: yes
   with_dict: "{{ outputs }}"

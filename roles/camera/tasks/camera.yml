@@ -1,18 +1,18 @@
 ---
 - name: 'Camera - ensure mem split'
   become: yes
-  pi_boot_config: config_vals=gpu_mem={{raspi_config_memory_split_gpu}}
-  notify:
-    - Apply raspi-config
+  pi_boot_config:
+    config_vals: gpu_mem={{raspi_config_memory_split_gpu}}
 
 - name: 'Camera - LED off'
   become: yes
-  pi_boot_config: config_vals=disable_camera_led=1
-  notify:
-    - Apply raspi-config
+  pi_boot_config:
+    config_vals: disable_camera_led=1
 
 - name: 'Camera - set state'
   become: yes
-  pi_boot_config: config_vals=start_x={{raspi_config_enable_camera|int}}
-  notify:
-    - Apply raspi-config
+  pi_boot_config:
+    config_vals: start_x={{raspi_config_enable_camera|int}}
+
+- name: 'Apply raspi-config'
+  command: raspi-config --apply-os-config

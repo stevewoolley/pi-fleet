@@ -1,33 +1,41 @@
 ---
-- name: 'Clone latest IoT'
-  git: repo=https://github.com/stevewoolley/IoT.git
-      dest=/home/pi/IoT
-      accept_hostkey=yes
+- name: 'Set hostname facts'
+  set_fact:
+    full_hostname="{{ inventory_hostname }}"
+    short_hostname="{{ inventory_hostname.split('.', 1)[0] }}"
+
+- name: 'Add bluetooth group to user'
+  user:
+    name: "{{ user }}"
+    groups: bluetooth
+    append: yes
+
+- name: 'Clone/Update latest repo'
+  git:
+    repo: https://github.com/stevewoolley/iot.git
+    dest: iot
+    accept_hostkey: yes
   become: yes
-  become_user: pi
+  become_user: "{{ user }}"
 
 - name: 'Install bluetooth requirements'
-  action: apt pkg={{item}} state=installed
+  apt:
+    name: "{{ item }}"
+    state: installed
   with_items:
-    - libusb-dev
-    - libdbus-1-dev
-    - libdbus-glib-1-dev
-    - libglib2.0-dev
-    - libudev-dev
-    - libical-dev
-    - libreadline-dev
-    - bluez
-    - bluez-tools
-    - bluez-firmware
-    - bluetooth
     - libbluetooth-dev
+    - pi-bluetooth
+    - bluez
+    - bluez-firmware
+    - libglib2.0-dev
+    - libboost-python-dev
+    - libboost-thread-dev
+    - python-bluez
 
-- name: 'Install Pybluez python package'
-  pip: name=pybluez executable=pip version=0.22 state=present
-
-
-- name: 'Add ibeacon init.d daemon script'
-  action: template src=ibeacon.conf.j2 dest=/etc/init.d/ibeacon mode=0755
-
-- name: 'Ensure ibeacon daemon is started'
-  action: service name=ibeacon state=started enabled=yes
+- name: 'Install python dependencies'
+  pip:
+    name: "{{ item }}"
+    executable: pip
+    state: latest
+  with_items:
+    - gattlib

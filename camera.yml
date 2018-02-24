@@ -2,6 +2,5 @@
 - hosts:
     - home-camera
     - office-camera
-  sudo: yes
   roles:
     - camera

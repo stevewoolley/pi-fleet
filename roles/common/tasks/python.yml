@@ -1,6 +1,8 @@
 ---
 - name: 'Install python and python packages'
-  action: apt pkg={{item}} state=latest
+  apt:
+    name: "{{ item }}"
+    state: latest
   with_items:
     - python
     - python-dev

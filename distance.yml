@@ -1,4 +1,6 @@
 ---
-- hosts: distance
+- hosts:
+    - home
+    - office
   roles:
     - distance

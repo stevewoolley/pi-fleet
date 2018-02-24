@@ -17,7 +17,9 @@
     upgrade: safe
 
 - name: 'Install common packages'
-  action: apt pkg={{item}} state=latest
+  apt:
+    name: "{{ item }}"
+    state: latest
   with_items:
     - rpi-update
     - git

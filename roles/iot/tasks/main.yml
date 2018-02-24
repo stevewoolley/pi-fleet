@@ -1,29 +1,22 @@
 ---
 - name: 'Set hostname facts'
   set_fact:
-    full_hostname="{{ inventory_hostname }}"
-    short_hostname="{{ inventory_hostname.split('.', 1)[0] }}"
+    full_hostname: "{{ inventory_hostname }}"
+    short_hostname: "{{ inventory_hostname.split('.', 1)[0] }}"
 
-- name: 'Install boto3 python package'
-  pip: name=boto3 executable=pip state=latest
-
-- name: 'Install argparse python package'
-  pip: name=argparse executable=pip state=latest
-
-- name: 'Install psutil python package'
-  pip: name=psutil executable=pip state=latest
-
-- name: 'Install AWSIoTPythonSDK python package'
-  pip: name=AWSIoTPythonSDK executable=pip state=latest
-
-- name: 'Install yaml python package'
-  pip: name=pyyaml executable=pip state=latest
-
-- name: 'Install gpiozero python package'
-  pip: name=gpiozero executable=pip state=latest
-
-- name: 'Install picamera python package'
-  pip: name=picamera executable=pip state=latest
+- name: 'Install python dependencies'
+  pip:
+    name: "{{ item }}"
+    executable: pip
+    state: latest
+  with_items:
+    - boto3
+    - argparse
+    - psutil
+    - AWSIoTPythonSDK
+    - pyyaml
+    - gpiozero
+    - picamera
 
 - name: 'Clone/Update latest repo'
   git:
@@ -34,13 +27,28 @@
   become_user: "{{ user }}"
 
 - name: 'Install IoT private key'
-  copy: src=~/.ssh/credentials/{{ iot_cert }}-private.pem.key dest=/home/pi/iot/{{ iot_cert }}-private.pem.key owner={{ user }} group={{ group }} mode=600
+  copy:
+    src: ~/.ssh/credentials/{{ iot_cert }}-private.pem.key
+    dest: /home/pi/iot/{{ iot_cert }}-private.pem.key
+    owner: "{{ user }}"
+    group: "{{ group }}"
+    mode: 600
 
 - name: 'Install IoT certificate'
-  copy: src=~/.ssh/credentials/{{ iot_cert }}-certificate.pem.crt dest=/home/pi/iot/{{ iot_cert }}-certificate.pem.crt owner=pi group=pi mode=600
+  copy:
+    src: ~/.ssh/credentials/{{ iot_cert }}-certificate.pem.crt
+    dest: /home/pi/iot/{{ iot_cert }}-certificate.pem.crt
+    owner: "{{ user }}"
+    group: "{{ group }}"
+    mode: 600
 
 - name: 'Install Root CA'
-  copy: src=~/.ssh/credentials/root.ca.pem dest=/home/pi/iot/root.ca.pem owner={{ user }} group={{ group }} mode=600
+  copy:
+    src: ~/.ssh/credentials/root.ca.pem
+    dest: /home/pi/iot/root.ca.pem
+    owner: "{{ user }}"
+    group: "{{ group }}"
+    mode: 600
 
 - name: 'Create iot log file'
   file:
@@ -51,7 +59,12 @@
     mode: 0660
 
 - name: 'Configure logrotate'
-  template: src=iot_logrotate.j2 dest=/etc/logrotate.d/iot owner={{ user }} group={{ group }} mode=0644
+  template:
+    src: iot_logrotate.j2
+    dest: /etc/logrotate.d/iot
+    owner: "{{ user }}"
+    group: "{{ group }}"
+    mode: 0644
   notify:
     - logrotate-apply
 
@@ -59,4 +72,4 @@
   cron:
     name: "host details daily"
     special_time: daily
-    job: "{{ webapps_dir }}/dynamic_host_pub.py -e a2j2tqmxrervzk.iot.us-east-1.amazonaws.com -r {{ webapps_dir }}/root.ca.pem -c {{ webapps_dir }}/{{ iot_cert }}-certificate.pem.crt -k {{ webapps_dir }}/{{ iot_cert }}-private.pem.key -n {{ short_hostname }}"
+    job: "{{ webapps_dir }}/dynamic_host_pub.py -e a2j2tqmxrervzk.iot.us-east-1.amazonaws.com -r {{ webapps_dir }}/root.ca.pem -c {{ webapps_dir }}/{{ iot_cert }}-certificate.pem.crt -k {{ webapps_dir }}/{{ iot_cert }}-private.pem.key"

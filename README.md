@@ -1,80 +1,68 @@
 # pi-fleet
+### Goal
+Manage fleet of raspberry pies with Ansible scripts using Raspbian OS. 
+### Real Goal 
+I am lazy so want to be able to deploy code patches and OS updates with a single click.
+### Parts
+My fleet is a mix of (_but honestly any Raspberry Pi should be fine_):
+* [Raspberry Pi Model Zero W](https://www.adafruit.com/product/3400)
+    - Single core ARM processor, small form factor, built in Wifi    
+* [Raspberry Pi Model 2B](https://www.adafruit.com/product/2358)
+    - Older model, 4 core ARM processor, built in ethernet
+* [Raspberry Pi Model 3B](https://www.adafruit.com/product/3055)
+    - Newer model, 4 core ARM processor, built in Wifi and ethernet
+* [Raspberry Pi Model B+](https://www.adafruit.com/product/1914)
+    - Old model, single core processor, built in ethernet
+* [Raspberry Pi Model Zero](https://www.adafruit.com/product/2885)
+    - Single core ARM processor, small form factor, built in Wifi    
 
-#### Ansible scripts to automate installs and updating of my Raspberry Pies
+_All of which can be purchased on [Amazon](https://amazon.com) or at my favorite gadget store [Adafruit](https://www.adafruit.com/)._
+
+##### Recommendation
+Buy the Raspberry Pi Model 3B if you need some horsepower. 
+Otherwise get a Raspberry Pi Model Zero W especially if you need a small form factor.
+Skip the Raspberry Pi Model B+, Raspberry Pi Model Zero W is cheaper, smaller, has built in wifi and is just as powerful.
+
 
 ### Steps for a new Pi (non-graphical)
+_Assumption: using Mac OS command line_
+1. Download latest [raspbian image](https://www.raspberrypi.org/downloads/raspbian/)
 
-1. Download latest raspbian image from https://www.raspberrypi.org/downloads/raspbian/
+1. Install image on available SD card ([instructions](https://www.raspberrypi.org/documentation/installation/installing-images/README.md))
 
-1. Install image on available SD card https://www.raspberrypi.org/documentation/installation/installing-images/README.md
-
-1. As of the November 2016 release, Raspbian has the SSH server disabled by default. You will have to enable it manually. This is done using raspi-config:
-
+1. As of the November 2016 release, Raspbian has the SSH server disabled by default. 
+You will have to enable it manually.
+SSH can be enabled by placing an empty file named 'ssh', without any extension, onto the boot partition of the SD card.
+While the SD card is still mounted:
+    ```bash
+    sudo -i
+    cd /Volumes/boot
+    touch ssh
     ```
-    sudo raspi-config
-    ```
-    Select Interfacing options, then navigate to ssh, press Enter and select  Enable or disable ssh server.
-
-    Note: For headless setup, SSH can be enabled by placing a file named 'ssh', without any extension, onto the boot partition of the SD card.
 
 1. Join your Pi to your network:
-    - For Pi Zeros (without the built in ethernet adapter)
+    - For Pies with wifi adapter only
+        While the SD card is still mounted:
+        ```bash
+        sudo -i
+        cd /Volumes/boot
+        ```
+        Create a wpa_supplicant.conf file for your specific network in this directory. 
+        - Example: wpa_supplicant.conf.example
+        
+1. Find your Pi on the network
+    1. Insert SD card into new Pi, connect live ethernet cable (if applicable) from local network, and power up the Pi   
+    1. On your desktop/laptop, populate you network cache (example shown using my local network CIDR): 
+        ```bash
+        nmap -sP 192.168.1.0/24
+        ```
     
-        1. Assuming use of Mac OS for install, become root on your Mac
-            ```bash
-            sudo -i
-            ```
-    
-        1. With your fresh SD card still mounted, open up the boot partition (example: mac)
-            ```bash
-            cd /Volumes/boot
-            ```
-            
-        1. Add to the tail end of the config.txt then save file:
-            ```
-            dtoverlay=dwc2
-            ```
-        
-        1. Edit cmdline.txt, inserting **modules-load=dwc2,g_ether** after **rootwait**.
-        something like:
-            ```
-            dwc_otg.lpm_enable=0 console=serial0,115200 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 elevator=deadline fsck.repair=yes rootwait modules-load=dwc2,g_ether quiet init=/usr/lib/raspi-config/init_resize.sh
-            ```
-        
-        1. Eject the mounted disk, something like (mounted disk may very, disk4 on my box):
-            ```bash
-            diskutil unmountDisk /dev/disk4
-            ```
-        
-        1. Insert SD card into new Pi and plus USB cable from Mac USB port into USB port on Pi Zero.
-        
-        1. Pi Zero should boot (drawing power from Mac USB port) within about 60 seconds
-        
-        1. RNDIS/Ethernet Gadget should now show in Network Properties on Mac
-        
-        1. Should be able to ssh into the pi via:
-            ```bash
-            ssh pi@raspberrypi.local
-            ```
-        
-        1. Enable internet on Pi Zero by starting Internet Sharing on Mac and setting **To computers using** to the **RNDIS** entry.
-        
-        1. This will probably break your current ssh connection into Pi. However, within a few seconds, the Pi should reset network interface with new IP address and be internet aware.
-        
-    - For Pies with built-in ethernet adapters (everybody else)
-        1. Insert SD card into new Pi, connect live ethernet cable (from local network), and power up the Pi
-    
-        1. On your desktop/laptop, populate you network cache (example shown using my local network CIDR): 
-            ```bash
-            nmap -sP 192.168.1.0/24
-            ```
-        
-        1. Look for the IP address of your new Pi
-            ```bash
-            arp -na | grep b8:27:eb
-            ```
-           This will display the IP addresses of all the Pies in your local network, you may have to determine which one is your new Pi.
-           *Let's assume the IP address of the new Pi is 192.168.1.24*   
+    1. Look for the IP address of your new Pi
+        ```bash
+        arp -na | grep b8:27:eb
+        ```
+       This will display the IP addresses of all the Pies in your local network, you may have to determine which one is your new Pi.
+       *Let's assume the IP address of the new Pi is 192.168.1.24*   
    
 1. Make sure you have generated your local ssh keys. If not:
     ```bash

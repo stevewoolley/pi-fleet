@@ -1,0 +1,29 @@
+# Ansible managed
+
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+ctrl_interface_group=0
+update_config=1
+
+# List supported wifi network here
+# priority: higher number = precedence
+
+network={
+	ssid="MY_WIFI_SSID"
+	psk="MY_WIFI_PASSWORD"
+	proto=WPA RSN
+	key_mgmt=WPA-PSK
+	pairwise=CCMP TKIP
+	group=CCMP TKIP
+	priority=2
+	id_str="Comment Here"
+}
+network={
+	ssid="MY_WIFI_SSID_2"
+	psk="MY_WIFI_PASSWORD_2"
+	proto=WPA RSN
+	key_mgmt=WPA-PSK
+	pairwise=CCMP TKIP
+	group=CCMP TKIP
+	priority=2
+	id_str="Second Comment Here"
+}

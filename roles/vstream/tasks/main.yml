@@ -1,66 +1,33 @@
 ---
-- name: 'Install libav packages'
-  become: yes
-  action: apt pkg={{item}} state=latest
-  with_items:
-    - libavcodec-extra
-    - libav-tools
+- name: 'Set hostname facts'
+  set_fact:
+    full_hostname: "{{ inventory_hostname }}"
+    short_hostname: "{{ inventory_hostname.split('.', 1)[0] }}"
 
 - name: 'Clone/Update latest repo'
-  git: repo={{ github_repo }}
-      dest={{ webapps_dir }}
-      accept_hostkey=yes
+  git:
+    repo: https://github.com/stevewoolley/piot.git
+    dest: piot
+    accept_hostkey: yes
   become: yes
   become_user: "{{ user }}"
 
-- name: 'ffmpeg download and unpack'
+- name: 'create kvs supervisord confs'
   become: yes
-  unarchive:
-    src: https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-{{ arm_arch }}-32bit-static.tar.xz
-    dest: /opt
-    remote_src: True
+  template:
+    src: kvs_sub.conf.j2
+    dest: /etc/supervisor/conf.d/kvs_sub.conf
+    mode: 0644
 
-- name: 'symlink ffmpeg'
+- name: 'login into aws docker registry'
+  shell: $(aws ecr get-login --region us-east-1 --no-include-email)
+
+- name: 'pull kvs docker image'
+  docker_image:
+    name: "{{ vstream_docker_image }}"
+
+- name: 'restart kvs_sub via supervisor'
+  supervisorctl:
+    name: kvs_sub
+    state: restarted
   become: yes
-  file:
-    src: /opt/ffmpeg-3.3-{{ arm_arch }}-32bit-static/ffmpeg
-    dest: /usr/local/bin/ffmpeg
-    state: link
-
-- name: 'symlink ffmpeg-10bit'
-  become: yes
-  file:
-    src: /opt/ffmpeg-3.3-{{ arm_arch }}-32bit-static/ffmpeg-10bit
-    dest: /usr/local/bin/ffmpeg-10bit
-    state: link
-
-- name: 'symlink ffprobe'
-  become: yes
-  file:
-    src: /opt/ffmpeg-3.3-{{ arm_arch }}-32bit-static/ffprobe
-    dest: /usr/local/bin/ffprobe
-    state: link
-
-- name: 'symlink ffserver'
-  become: yes
-  file:
-    src: /opt/ffmpeg-3.3-{{ arm_arch }}-32bit-static/ffserver
-    dest: /usr/local/bin/ffserver
-    state: link
-
-- name: 'symlink qt-faststart'
-  become: yes
-  file:
-    src: /opt/ffmpeg-3.3-{{ arm_arch }}-32bit-static/qt-faststart
-    dest: /usr/local/bin/qt-faststart
-    state: link
-
-- name: 'Set camera state'
-  include: camera.yml
-
-- name: 'Supervisor script for vstream monitor'
-  become: yes
-  template: src=vstream_sub.conf.j2 dest=/etc/supervisor/conf.d/vstream_sub.conf mode=0644
-  with_dict: "{{ streams }}"
-  notify:
-    - restart supervisord

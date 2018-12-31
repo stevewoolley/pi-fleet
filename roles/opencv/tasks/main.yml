@@ -1,0 +1,49 @@
+---
+- name: 'Remove some packages'
+  apt:
+    name: [
+      'x264',
+      'libx264-dev',
+      'wolfram-engine',
+    ]
+    state: absent
+
+- name: 'Install opencv dependencies'
+  apt:
+    name: [
+      'libjpeg-dev',
+      'libjasper-dev',
+      'libtiff-dev',
+      'libavcodec-dev',
+      'libavformat-dev',
+      'libswscale-dev',
+      'libdc1394-22-dev',
+      'libxine2-dev',
+      'libv4l-dev',
+      'libxvidcore-dev',
+      'libx264-dev',
+      'libatlas-base-dev',
+      'gfortran',
+      'yasm',
+      'libgstreamer0.10-dev',
+      'libgstreamer-plugins-base0.10-dev',
+      'libtbb-dev',
+      'qt5-default',
+      'libmp3lame-dev',
+      'libtheora-dev',
+      'libvorbis-dev',
+      'libopencore-amrnb-dev',
+      'libopencore-amrwb-dev',
+      'libavresample-dev',
+      'x264',
+      'v4l-utils',
+      'libprotobuf-dev',
+      'protobuf-compiler',
+      'libgoogle-glog-dev',
+      'libgflags-dev',
+      'libgphoto2-dev',
+      'libeigen3-dev',
+      'libhdf5-dev',
+      'doxygen'
+    ]
+    state: latest

@@ -3,6 +3,9 @@
 ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
 ctrl_interface_group=0
 update_config=1
+ap_scan=1
+fast_reauth=1
+country=US
 
 {% for wifi in wifis %}
 network={

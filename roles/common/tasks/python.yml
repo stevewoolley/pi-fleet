@@ -1,10 +1,19 @@
 ---
-- name: 'Install python and python packages'
+- name: 'Install python and dependencies'
   apt:
-    name: "{{ item }}"
+    name: [
+      'python',
+      'python-dev',
+      'python-pip',
+      'python-openssl',
+      'python-testresources'
+    ]
     state: latest
-  with_items:
-    - python
-    - python-dev
-    - python-pip
-    - python-openssl
+
+- name: 'Install python libs'
+  pip:
+    name: [
+      'argparse',
+      'requests'
+    ]
+    state: latest

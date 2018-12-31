@@ -1,7 +1,7 @@
 [program:output_sub-{{ item.value.pin }}]
 command={{ webapps_dir }}/output_sub.py
     -e {{ aws_iot_endpoint }}
-    -r {{ creds_location }}/root.ca.pem
+    -r {{ creds_location }}/AmazonRootCA1.pem
     -c {{ creds_location }}/{{ iot_cert }}-certificate.pem.crt
     -k {{ creds_location }}/{{ iot_cert }}-private.pem.key
     -t {{ item.value.topic }}

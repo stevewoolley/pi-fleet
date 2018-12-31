@@ -1,0 +1,27 @@
+---
+- name: 'Set hostname facts'
+  set_fact:
+    full_hostname: "{{ inventory_hostname }}"
+    short_hostname: "{{ inventory_hostname.split('.', 1)[0] }}"
+
+- name: 'Install python dependencies'
+  pip:
+    name: [
+      'boto3'
+    ]
+
+- name: 'Clone/Update latest repo'
+  git:
+    repo: https://github.com/stevewoolley/piot.git
+    dest: piot
+    accept_hostkey: yes
+  become: yes
+  become_user: "{{ user }}"
+
+- name: 'Crontab entry for pi metrics'
+  cron:
+    name: "pi metrics"
+    minute: "*/5"
+    job: "/home/pi/piot/perf_cw.py -n {{ iot_namespace }} --hostname {{ short_hostname }}"
+  become: yes
+  become_user: "{{ user }}"

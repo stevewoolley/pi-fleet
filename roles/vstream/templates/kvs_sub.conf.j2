@@ -1,0 +1,19 @@
+[program:kvs_sub]
+command={{ webapps_dir }}/kvs_sub.py
+    -e {{ aws_iot_endpoint }}
+    -r {{ creds_location }}/AmazonRootCA1.pem
+    -c {{ creds_location }}/{{ iot_cert }}-certificate.pem.crt
+    -k {{ creds_location }}/{{ iot_cert }}-private.pem.key
+    -t {{ short_hostname }}/vstream
+    -s {{ short_hostname }}
+    --aws_access_key {{ aws_access_key_id }}
+    --aws_secret_key {{ aws_secret_access_key }}
+    --aws_region {{ aws_region }}
+    -i {{ vstream_docker_image }}
+directory={{ webapps_dir }}
+autostart=true
+autorestart=true
+stdout_logfile={{ log_file }}
+stderr_logfile={{ log_file }}
+redirect_stderr=true
+exitcodes=0

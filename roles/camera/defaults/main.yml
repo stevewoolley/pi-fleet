@@ -1,5 +1,4 @@
-raspi_config_memory_split_gpu: 16
-raspi_config_min_camera_mem: 128
+raspi_config_memory_split_gpu: 128
 raspi_config_enable_camera: yes
 raspi_config_other_options: {
   'disable_camera_led':1

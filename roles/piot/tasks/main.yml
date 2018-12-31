@@ -1,7 +1,4 @@
 ---
-- name: 'Amazon config setup'
-  import_tasks: aws.yml
-
 - name: 'Set hostname facts'
   set_fact:
     full_hostname: "{{ inventory_hostname }}"
@@ -14,18 +11,15 @@
       'awscli',
       'psutil',
       'AWSIoTPythonSDK',
-      'pytz',
-      'pyyaml',
       'gpiozero',
-      'picamera'
+      'watchtower'
     ]
     state: latest
 
-
 - name: 'Clone/Update latest repo'
   git:
-    repo: https://github.com/stevewoolley/iot.git
-    dest: iot
+    repo: https://github.com/stevewoolley/piot.git
+    dest: piot
     accept_hostkey: yes
   become: yes
   become_user: "{{ user }}"
@@ -33,7 +27,7 @@
 - name: 'Install IoT private key'
   copy:
     src: ~/.ssh/credentials/{{ iot_cert }}-private.pem.key
-    dest: /home/pi/iot/{{ iot_cert }}-private.pem.key
+    dest: /home/pi/piot/{{ iot_cert }}-private.pem.key
     owner: "{{ user }}"
     group: "{{ group }}"
     mode: 600
@@ -41,7 +35,7 @@
 - name: 'Install IoT certificate'
   copy:
     src: ~/.ssh/credentials/{{ iot_cert }}-certificate.pem.crt
-    dest: /home/pi/iot/{{ iot_cert }}-certificate.pem.crt
+    dest: /home/pi/piot/{{ iot_cert }}-certificate.pem.crt
     owner: "{{ user }}"
     group: "{{ group }}"
     mode: 600
@@ -49,7 +43,7 @@
 - name: 'Install Root CA'
   copy:
     src: ~/.ssh/credentials/root.ca.pem
-    dest: /home/pi/iot/root.ca.pem
+    dest: /home/pi/piot/root.ca.pem
     owner: "{{ user }}"
     group: "{{ group }}"
     mode: 600
@@ -57,7 +51,7 @@
 - name: 'Install Amazon Root CA'
   copy:
     src: ~/.ssh/credentials/AmazonRootCA1.pem
-    dest: /home/pi/iot/AmazonRootCA1.pem
+    dest: /home/pi/piot/AmazonRootCA1.pem
     owner: "{{ user }}"
     group: "{{ group }}"
     mode: 600

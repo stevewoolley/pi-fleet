@@ -7,7 +7,7 @@ command={{ webapps_dir }}/supervisor_sub.py
     -t {{ item.value.topic }}
 
 directory={{ webapps_dir }}
-autostart=true
+autostart=false
 autorestart=true
 stdout_logfile={{ log_file }}
 stderr_logfile={{ log_file }}

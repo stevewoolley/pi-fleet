@@ -1,33 +1,10 @@
 ---
-- name: 'Install common packages'
-  apt:
-    pkg: "{{ item }}"
-    state: latest
-  with_items:
-    - gpac
 
-- name: 'Clone/Update latest repo'
-  git:
-    repo: https://github.com/stevewoolley/iot.git
-    dest: iot
-    accept_hostkey: yes
-  become: yes
-  become_user: "{{ user }}"
+- name: 'Install camera common packages'
+  apt:
+    name: [
+      'gpac'
+    ]
 
 - name: 'Set camera state'
   import_tasks: camera.yml
-
-- name: 'create camera_sub supervisord confs'
-  become: yes
-  template:
-    src: camera_sub.conf.j2
-    dest: /etc/supervisor/conf.d/camera_sub.conf
-    mode: 0644
-  with_dict: "{{ cameras }}"
-
-- name: 'Restart camera_sub via supervisor'
-  supervisorctl:
-    name: camera_sub
-    state: restarted
-  become: yes
-  with_dict: "{{ cameras }}"

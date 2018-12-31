@@ -9,10 +9,20 @@
   pi_boot_config:
     config_vals: disable_camera_led=1
 
-- name: 'Camera - set state'
-  become: yes
-  pi_boot_config:
-    config_vals: start_x={{raspi_config_enable_camera|int}}
+- name: 'Enable Camera'
+  shell: "raspi-config nonint do_camera 0"
 
 - name: 'Apply raspi-config'
   command: raspi-config --apply-os-config
+
+- name: 'Add v4l module'
+  lineinfile:
+    dest: /etc/modules
+    line: 'bcm2835-v4l2'
+    state: present
+
+- name: 'Enable v4l module'
+  become: yes
+  modprobe:
+    name: bcm2835-v4l2
+    state: present
